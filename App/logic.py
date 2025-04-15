@@ -1,4 +1,7 @@
 import time
+import csv
+
+csv.field_size_limit(2147483647)
 
 def new_logic():
     """
