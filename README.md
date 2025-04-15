@@ -34,7 +34,7 @@ The students edit this section to add their names, Uniandes emails, and specify 
 
 1. Juan David Echeverry, jd.echeverry@uniandes.edu.co.
 1. Daniel Andres Rincon, da.rincon12@uniandes.edu.co.
-1. Nicolas Castaño, n.castano02@uniandes.edu.co.
+1. Nicolas Castaño, n.castanoc2@uniandes.edu.co.
 
 [Back to top](#retos-template)
 
