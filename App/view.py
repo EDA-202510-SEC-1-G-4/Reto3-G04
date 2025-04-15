@@ -1,5 +1,8 @@
 import sys
 
+default_limit = 1000
+
+sys.setrecursionlimit(default_limit*10)
 
 def new_logic():
     """
