@@ -16,6 +16,15 @@ def new_logic():
                 'Vict Descent','Premis Cd','Premis Desc','Status',
                 'Status Desc','LOCATION','LAT','LON']
 
+    
+    return {
+        'columnas': columnas,
+        'data': [],
+        'size': 0,
+        'time': 0,
+        'start_time': 0,
+        'end_time': 0
+    }
 
 # Funciones para la carga de datos
 
