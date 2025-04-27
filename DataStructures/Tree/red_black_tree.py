@@ -7,33 +7,21 @@ def new_map():
            'type':'RBT'}
     return rbt
 
-
-def rotate_left(node):
-    if node != None and node['right'] == None:
-        prin = node['left']
-        left = node['left']['left']
-        right = node
-        node = prin
-        node['left'] = left
-        node['right'] = right
-    elif node != None and node['right'] != None:
-        prin = node['left']
-        left = node['left']['left']
-        right = node
-        right2 = node['right']['right']
-        node = prin
-        node['left'] = left
-        node['right'] = right
-        node['right']['right'] = right2
+def rotate_left(root):
+    node = root['right']
+    root['right'] = node['left']
+    node['left'] = root
+    node['color'] = root['color']
+    root['color'] = 0
     return node
 
-def rotate_right(node):
-    if node != None and node['right'] != None:
-        prin = node['right']
-        left = node
-        node = prin
-        node['left'] = left
-    return
+def rotate_right(root):
+    node = root['left']
+    root['left'] = node['right']
+    node['right'] = root
+    node['color'] = root['color']
+    root['color'] = 0
+    return node
 
 def flip_node_color(node):
     if node['color'] == 0:
@@ -51,40 +39,35 @@ def flip_colors(node):
             flip_node_color(node['left'])
     return node
 
+def balance(node):
+    if rbn.is_red(node['right']) and not rbn.is_red(node['left']):
+        node = rotate_left(node)
+
+    if rbn.is_red(node['left']) and rbn.is_red(node['left']['left']):
+        node = rotate_right(node)
+    
+    if rbn.is_red(node['left']) and rbn.is_red(node['right']):
+        flip_colors(node)
+    return node
+
 def insert_node(root,key,value):
     if root == None:
         root = rbn.new_node(key,value)
     elif root['key'] == key:
         root['value'] = value
     elif root['key'] > key:
-        root = insert_node(root['left'],key,value)
+        root['left'] = insert_node(root['left'],key,value)
     elif root['key'] < key:
-        root = insert_node(root['right'],key,value)
-    return root
-
-def balance(root):
-    if root != None and root['left'] != None:
-        if rbn.is_red(root) and rbn.is_red(root['left']):
-            root = rotate_left(root)
-
-    if root != None and root['right'] != None:    
-        if rbn.is_red(root['right']):
-            root = rotate_right(root)
-    
-    if root != None and root['right'] != None and root['left'] != None:
-        if rbn.is_red(root['right']) and rbn.is_red(root['left']):
-            root = flip_colors(root)
+        root['right'] = insert_node(root['right'],key,value)
+    root = balance(root)
     return root
         
 
 def put(rbt,key,value):
     rbt['root'] = insert_node(rbt['root'],key,value)
-    rbt['root'] = balance(rbt['root'])
     if rbn.is_red(rbt['root']):
         rbn.change_color(rbt['root'],1)
     return rbt
-
-#Falta el recorrido de verificación para balanceo
 
 def get_node(root,key):
     if root == None:
