@@ -15,16 +15,16 @@ def new_logic():
                 'Crm Cd','Crm Cd Desc','Vict Age','Vict Sex',
                 'Vict Descent','Premis Cd','Premis Desc','Status',
                 'Status Desc','LOCATION','LAT','LON']
+    catalog = {}
 
-    
-    return {
-        'columnas': columnas,
+    for columna in columnas: 
+        catalog[columna] = {
         'data': [],
         'size': 0,
         'time': 0,
         'start_time': 0,
-        'end_time': 0
-    }
+        'end_time': 0}
+    return catalog
 
 # Funciones para la carga de datos
 
