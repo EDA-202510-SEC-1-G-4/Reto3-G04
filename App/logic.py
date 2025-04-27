@@ -1,5 +1,6 @@
 import time
 import csv
+import datetime as dt
 
 csv.field_size_limit(2147483647)
 
@@ -9,6 +10,11 @@ def new_logic():
     """
     #TODO: Llama a las funciónes de creación de las estructuras de datos
     pass
+    columnas = ['DR_NO','Date Rptd','DATE OCC','TIME OCC',
+                'AREA','AREA NAME','Rpt Dist No','Part 1-2',
+                'Crm Cd','Crm Cd Desc','Vict Age','Vict Sex',
+                'Vict Descent','Premis Cd','Premis Desc','Status',
+                'Status Desc','LOCATION','LAT','LON']
 
 
 # Funciones para la carga de datos
