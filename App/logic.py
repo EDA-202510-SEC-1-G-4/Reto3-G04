@@ -1,6 +1,8 @@
 import time
 import csv
 import datetime as dt
+from DataStructures.Tree import red_black_tree as rbt
+from DataStructures.List import single_linked_list as sl
 
 csv.field_size_limit(2147483647)
 
@@ -9,21 +11,18 @@ def new_logic():
     Crea el catalogo para almacenar las estructuras de datos
     """
     #TODO: Llama a las funciónes de creación de las estructuras de datos
-    pass
-    columnas = ['DR_NO','Date Rptd','DATE OCC','TIME OCC',
-                'AREA','AREA NAME','Rpt Dist No','Part 1-2',
-                'Crm Cd','Crm Cd Desc','Vict Age','Vict Sex',
-                'Vict Descent','Premis Cd','Premis Desc','Status',
-                'Status Desc','LOCATION','LAT','LON']
     catalog = {}
-
-    for columna in columnas: 
-        catalog[columna] = {
-        'data': [],
-        'size': 0,
-        'time': 0,
-        'start_time': 0,
-        'end_time': 0}
+    
+    # Creamos un árbol binario rojo-negro (RBT) para cada columna de interés
+    catalog['DR_NO'] = {'data': rbt.new_map(), 'size': 0}
+    catalog['Date Rptd'] = {'data': rbt.new_map(), 'size': 0}
+    catalog['DATE OCC'] = {'data': rbt.new_map(), 'size': 0}
+    catalog['AREA NAME'] = {'data': rbt.new_map(), 'size': 0}
+    catalog['Crm Cd'] = {'data': rbt.new_map(), 'size': 0}
+    
+    # Creamos una lista para almacenar los registros completos
+    catalog['records'] = {'data': [], 'size': 0}
+    
     return catalog
 
 # Funciones para la carga de datos
@@ -32,8 +31,7 @@ def load_data(catalog, filename):
     """
     Carga los datos del reto
     """
-    # TODO: Realizar la carga de datos
-    pass
+    
 
 # Funciones de consulta sobre el catálogo
 
