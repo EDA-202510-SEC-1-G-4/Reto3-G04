@@ -125,12 +125,9 @@ def req_4(catalog):
     pass
 
 
-def req_5(catalog):
-    """
-    Retorna el resultado del requerimiento 5
-    """
-    # TODO: Modificar el requerimiento 5
-    pass
+def req_5(catalog,areas,fecha_in,fecha_fin):
+    fecha_in = dt.strptime(fecha_in,"%Y-%m-%d")
+    fecha_fin = dt.strptime(fecha_fin,"%Y-%m-%d")
 
 def req_6(catalog):
     """
