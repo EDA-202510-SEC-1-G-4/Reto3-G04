@@ -46,12 +46,10 @@ def print_req_1(control):
     start_date = input("Ingrese la fecha de inicio (formato YYYY-MM-DD): ")
     end_date = input("Ingrese la fecha de fin (formato YYYY-MM-DD): ")
 
-
-    start_time = log.get_time()
-    result = log.req_1(control, start_date, end_date)
+    start_time = log.get_time()  # Usar 'logic' en lugar de 'log'
+    result = log.req_1(control, start_date, end_date)  # Usar 'logic' en lugar de 'log'
     total_records = len(result)
 
-    
     if not result:
         print(f"No se encontraron crímenes entre las fechas {start_date} y {end_date}.")
     else:
@@ -59,15 +57,14 @@ def print_req_1(control):
         
         print("\nLos primeros 5 crímenes:")
         for i, crime in enumerate(result[:5]):
-            print(f"{i+1}. {crime['DR_NO']} | {crime['Date Occurred']} | {crime['Time Occurred']} | {crime['Area Name']} | {crime['Crime Code']} | {crime['Location']}")
+            print(f"{i+1}. {crime['DR_NO']} | {crime['DATE OCC']} | {crime['TIME OCC']} | {crime['AREA NAME']} | {crime['Crm Cd']} | {crime['LOCATION']}")
         
         print("\nLos últimos 5 crímenes:")
         for i, crime in enumerate(result[-5:]):
-            print(f"{i+1}. {crime['DR_NO']} | {crime['Date Occurred']} | {crime['Time Occurred']} | {crime['Area Name']} | {crime['Crime Code']} | {crime['Location']}")
+            print(f"{i+1}. {crime['DR_NO']} | {crime['DATE OCC']} | {crime['TIME OCC']} | {crime['AREA NAME']} | {crime['Crm Cd']} | {crime['LOCATION']}")
 
-  
-    end_time = log.get_time()
-    execution_time = log.delta_time(start_time, end_time)
+    end_time = log.get_time()  # Usar 'logic' en lugar de 'log'
+    execution_time = log.delta_time(start_time, end_time)  # Usar 'logic' en lugar de 'log'
     print(f"\nEl tiempo tomado fue de {execution_time} ms")
     print("\n========================\n")
 
