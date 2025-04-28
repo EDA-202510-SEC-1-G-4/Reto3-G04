@@ -53,11 +53,12 @@ def load_data(catalog, filename):
 
 
         hash_value = mf.hash_value(catalog['Area']['data'],fila['AREA NAME'])
-        ocupied, pos = mp.find_slot(catalog['Area']['data'],fila['AREA NAME'],hash_value)
-        if ocupied:
-            al.add_last(catalog['Area']['data']['table'][pos],fila)
+        if mp.contains(catalog['Area']['data'],fila['AREA NAME']):
+            al.add_last(catalog['Area']['data']['table']['elements'][hash_value]['value'],fila)
         else:
-            mp.put(catalog["Area"]["data"],fila["AREA NAME"],fila)
+            lista = al.new_list()
+            al.add_last(lista,fila)
+            mp.put(catalog["Area"]["data"],fila["AREA NAME"],lista)
         catalog["Area"]["size"] += 1
 
 

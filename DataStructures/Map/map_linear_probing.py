@@ -9,7 +9,7 @@ def new_map(num, factores=0.5, primo=109345121):
     mapa["scale"] = 1
     mapa["shift"] = 0
     mapa["table"] = al.new_list()
-    for i in range (num+1):
+    for i in range(mapa['capacity']):
         al.add_last(mapa["table"],{"key": None, "value": None})
 
     mapa["limit_factor"]= factores
