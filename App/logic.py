@@ -5,6 +5,7 @@ from DataStructures.Tree import red_black_tree as rbt
 from DataStructures.List import single_linked_list as sl
 from DataStructures.List import array_list as al
 from DataStructures.Map import map_linear_probing as mp
+from DataStructures.Map import map_functions as mf
 import os
 
 
@@ -49,8 +50,17 @@ def load_data(catalog, filename):
         catalog["Date_Rptd"]["size"] += 1
         rbt.put(catalog["Date_Occrd"]["data"],fila["DATE OCC"],fila)
         catalog["Date_Occrd"]["size"] += 1
-        mp.put(catalog["Area"]["data"],fila["AREA NAME"],fila)
+
+
+        hash_value = mf.hash_value(catalog['Area']['data'],fila['AREA NAME'])
+        ocupied, pos = mp.find_slot(catalog['Area']['data'],fila['AREA NAME'],hash_value)
+        if ocupied:
+            al.add_last(catalog['Area']['data']['table'][pos],fila)
+        else:
+            mp.put(catalog["Area"]["data"],fila["AREA NAME"],fila)
         catalog["Area"]["size"] += 1
+
+
         rbt.put(catalog["Edad"]["data"],fila["Vict Age"],fila)
         catalog["Edad"]["size"] += 1
         rbt.put(catalog["Codigos"]["data"],fila["Crm Cd"],fila)
@@ -119,9 +129,14 @@ def req_4(catalog):
     pass
 
 
-def req_5(catalog,areas,fecha_in,fecha_fin):
+def req_5(catalog,n_areas,fecha_in,fecha_fin):
+    #Definición de variables generales:
     fecha_in = dt.strptime(fecha_in,"%Y-%m-%d")
     fecha_fin = dt.strptime(fecha_fin,"%Y-%m-%d")
+    areas = catalog['Area']['data']
+    
+    #Primer filtro (fecha):
+    
 
 def req_6(catalog):
     """
