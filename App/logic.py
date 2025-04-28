@@ -65,11 +65,11 @@ def load_data(catalog, filename):
         cinco.append(catalog["filas"]["elements"][-i])
 
     for fila2 in cinco:
-        retorno += (f"{fila2['DR_NO']}\n"
-                f"{fila2['Date Rptd']}\n"
-                f"{fila2['DATE OCC']}\n"
-                f"{fila2['AREA NAME']}\n"
-                f"{fila2['Crm Cd']}\n"
+        retorno += (f"ID: {fila2['DR_NO']}\n"
+                f"Fecha reportada del crimen: {fila2['Date Rptd']}\n"
+                f"Fecha en la que ocurrio el crimen: {fila2['DATE OCC']}\n"
+                f"Nombre del Area: {fila2['AREA NAME']}\n"
+                f"Codigo del Crimen: {fila2['Crm Cd']}\n"
                 f"\n =========================== \n")
         
 
