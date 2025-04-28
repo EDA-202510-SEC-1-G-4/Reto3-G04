@@ -1,4 +1,5 @@
 import sys
+import App.logic as log
 
 default_limit = 1000
 
@@ -43,9 +44,33 @@ def print_req_1(control):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 1
-    pass
+    start_date = input("Ingrese la fecha de inicio (formato YYYY-MM-DD): ")
+    end_date = input("Ingrese la fecha de fin (formato YYYY-MM-DD): ")
 
+
+    start_time = log.get_time()
+    result = log.req_1(control, start_date, end_date)
+    total_records = len(result)
+
+    
+    if not result:
+        print(f"No se encontraron crímenes entre las fechas {start_date} y {end_date}.")
+    else:
+        print(f"El número total de crímenes ocurridos entre {start_date} y {end_date} es: {total_records}")
+        
+        print("\nLos primeros 5 crímenes:")
+        for i, crime in enumerate(result[:5]):
+            print(f"{i+1}. {crime['DR_NO']} | {crime['Date Occurred']} | {crime['Time Occurred']} | {crime['Area Name']} | {crime['Crime Code']} | {crime['Location']}")
+        
+        print("\nLos últimos 5 crímenes:")
+        for i, crime in enumerate(result[-5:]):
+            print(f"{i+1}. {crime['DR_NO']} | {crime['Date Occurred']} | {crime['Time Occurred']} | {crime['Area Name']} | {crime['Crime Code']} | {crime['Location']}")
+
+  
+    end_time = log.get_time()
+    execution_time = log.delta_time(start_time, end_time)
+    print(f"\nEl tiempo tomado fue de {execution_time} ms")
+    print("\n========================\n")
 
 def print_req_2(control):
     """
