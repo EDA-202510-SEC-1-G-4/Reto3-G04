@@ -44,14 +44,33 @@ def load_data(catalog, filename):
     filas = csv.DictReader(file)
     for fila in filas:
         
+        #Identificador unico de crimen
         rbt.put(catalog["ID"]["data"],fila["DR_NO"],fila)
         catalog["ID"]["size"] += 1
-        rbt.put(catalog["Date_Rptd"]["data"],fila["Date Rptd"],fila)
+
+        #Fecha en la que se reporto el crimen:
+        exist = rbt.get(catalog['Date_Rptd']['data'],fila["Date Rptd"])
+        if exist == None:
+            lista = al.new_list()
+            al.add_last(lista,fila)
+            rbt.put(catalog["Date_Rptd"]["data"],fila["Date Rptd"],lista)
+        else:
+            al.add_last(exist,fila)
+            rbt.put(catalog["Date_Rptd"]["data"],fila["Date Rptd"],exist)
         catalog["Date_Rptd"]["size"] += 1
-        rbt.put(catalog["Date_Occrd"]["data"],fila["DATE OCC"],fila)
+
+        #Fecha en la que ocurrio el crimen:
+        exist = rbt.get(catalog['Date_Occrd']['data'],fila["DATE OCC"])
+        if exist == None:
+            lista = al.new_list()
+            al.add_last(lista,fila)
+            rbt.put(catalog["Date_Occrd"]["data"],fila["DATE OCC"],lista)
+        else:
+            al.add_last(exist,fila)
+            rbt.put(catalog["Date_Occrd"]["data"],fila["DATE OCC"],exist)
         catalog["Date_Occrd"]["size"] += 1
 
-
+        #Areas:
         hash_value = mf.hash_value(catalog['Area']['data'],fila['AREA NAME'])
         if mp.contains(catalog['Area']['data'],fila['AREA NAME']):
             al.add_last(catalog['Area']['data']['table']['elements'][hash_value]['value'],fila)
@@ -62,9 +81,27 @@ def load_data(catalog, filename):
         catalog["Area"]["size"] += 1
 
 
-        rbt.put(catalog["Edad"]["data"],fila["Vict Age"],fila)
+        #Edad de la victima:
+        exist = rbt.get(catalog['Edad']['data'],fila["Vict Age"])
+        if exist == None:
+            lista = al.new_list()
+            al.add_last(lista,fila)
+            rbt.put(catalog["Edad"]["data"],fila["Vict Age"],lista)
+        else:
+            al.add_last(exist,fila)
+            rbt.put(catalog["Edad"]["data"],fila["Vict Age"],exist)
         catalog["Edad"]["size"] += 1
-        rbt.put(catalog["Codigos"]["data"],fila["Crm Cd"],fila)
+
+
+        #Codigo del crimen:
+        exist = rbt.get(catalog['Codigos']['data'],fila["Crm Cd"])
+        if exist == None:
+            lista = al.new_list()
+            al.add_last(lista,fila)
+            rbt.put(catalog["Codigos"]["data"],fila["Crm Cd"],lista)
+        else:
+            al.add_last(exist,fila)
+            rbt.put(catalog["Codigos"]["data"],fila["Crm Cd"],exist)
         catalog["Codigos"]["size"] += 1
 
         al.add_last(catalog["filas"],fila)
