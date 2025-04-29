@@ -42,7 +42,14 @@ def load_data(catalog, filename):
     agfile = data_dir + filename
     file = open(agfile, 'r', encoding='utf-8')
     filas = csv.DictReader(file)
+
+    reportes = al.new_list()
     for fila in filas:
+        fila["Date Rptd"] = dt.strptime(fila["Date Rptd"], '%m/%d/%Y %I:%M:%S %p')
+        fila["DATE OCC"] = dt.strptime(fila["DATE OCC"], '%m/%d/%Y %I:%M:%S %p')
+        al.add_last(reportes,fila)
+   
+    for fila in reportes["elements"]:
         
         #Identificador unico de crimen
         rbt.put(catalog["ID"]["data"],fila["DR_NO"],fila)
@@ -236,8 +243,8 @@ def req_2(catalog,fecha_in,fecha_fin):
 def compare_crit_by_date(elm1,elm2):
     isSorted = False
 
-    fecha1 = dt.strptime(elm1["DATE OCC"], "%Y/%m/%d %I:%M:%S %p")
-    fecha2 = dt.strptime(elm2["DATE OCC"], "%Y/%m/%d %I:%M:%S %p")
+    fecha1 = elm1["DATE OCC"]
+    fecha2 = elm2["DATE OCC"]
     area1 = elm2["AREA NAME"]
     area2 = elm2["AREA NAME"]
     
