@@ -253,13 +253,46 @@ def req_3(catalog):
     pass
 
 
-def req_4(catalog):
+def req_4(catalog,N,edad_in,edad_fin):
     """
     Retorna el resultado del requerimiento 4
     """
-    # TODO: Modificar el requerimiento 4
-    pass
+    
+    filtro = rbt.values(catalog["Edad"]["data"],edad_in,edad_fin)
+    leves = al.new_list()
+    graves = al.new_list()
+    for i in range(sl.size(filtro)):
+        elm = sl.get_element(filtro,i)
+        for fila in elm["elements"]:
+            if int(fila["Part 1-2"]) == 1:
+                al.add_last(graves,fila)
+            else:
+                al.add_last(leves,fila)
 
+    ordenadosLeve = al.merge_sort(leves,sort_crit_by_age)
+    ordenadosGrave = al.merge_sort(graves,sort_crit_by_age) 
+
+    ordenadosLeve = ordenadosLeve["elements"][:N]   
+    ordenadosGrave = ordenadosGrave["elements"][:N]
+
+
+
+
+def sort_crit_by_age(elm1,elm2):
+    isSorted = False
+
+    fecha1 = elm1["Vict Age"]
+    fecha2 = elm2["Vict Age"]
+    area1 = elm2["DATE OCC"]
+    area2 = elm2["DATE OCC"]
+    
+    if fecha1 > fecha2:
+        isSorted = True
+    elif fecha1 == fecha2:
+        if area1 < area2:
+            isSorted = True
+    
+    return isSorted
 
 def req_5(catalog,n_areas,fecha_in,fecha_fin):
     #Definición de variables generales:
