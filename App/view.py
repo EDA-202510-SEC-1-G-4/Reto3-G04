@@ -107,7 +107,18 @@ def print_req_5(control):
     n_areas = int(input('Numero de areas a consultar: '))
     fecha_in = str(input('Fecha inicial de busqueda (MM/DD/YYYY): '))
     fecha_fin = str(input('Fecha final de busqueda (MM/DD/YYYY): '))
-    data = log.req_5(control,n_areas,fecha_in,fecha_fin)
+    data, no_resueltos, date_min, date_max = log.req_5(control,n_areas,fecha_in,fecha_fin)
+    retorno = ''
+    for area in data:
+        retorno += (f"\nArea donde ocurrio el crimen: {data[area]['elements'][0]['AREA']}\n"
+                   f"Nombre del area donde ocurrio el crimen: {area}\n"
+                   "==============================================\n")
+                   
+    retorno += (f"Crimenes no resueltos en el rango de fechas: {no_resueltos}\n"
+                f"Fecha del primer crimen: {date_min}\n"
+                f"Fecha del ultimo crimen: {date_max}\n"
+                "==============================================\n")
+    print(retorno)     
 
 
 def print_req_6(control):

@@ -334,6 +334,9 @@ def req_5(catalog,n_areas,fecha_in,fecha_fin):
     rubro = catalog['Area']['data']
     keys = mp.key_set(rubro)
     values = mp.value_set(rubro)
+    no_resueltos = 0
+    date_min = dt.strptime("12/31/2100", "%m/%d/%Y")
+    date_max = dt.strptime("01/01/0001", "%m/%d/%Y")
 
     #variables auxiliares:
     areas_filtradas = al.new_list()
@@ -351,6 +354,13 @@ def req_5(catalog,n_areas,fecha_in,fecha_fin):
             fecha = filas['elements'][j]['DATE OCC']
             if fecha < fecha_in or fecha > fecha_fin:
                 al.remove(org[keys['elements'][i]],org[keys['elements'][i]]['elements'][j])
+            else:
+                if org[keys['elements'][i]]['elements'][j]['Status Desc'] == "Invest Cont":
+                    no_resueltos += 1
+                if org[keys['elements'][i]]['elements'][j]['DATE OCC'] < date_min:
+                    date_min = org[keys['elements'][i]]['elements'][j]['DATE OCC']
+                if org[keys['elements'][i]]['elements'][j]['DATE OCC'] > date_max:
+                    date_max = org[keys['elements'][i]]['elements'][j]['DATE OCC']
             j += 1
 
     #unir area con size para ordenar: 
@@ -367,7 +377,10 @@ def req_5(catalog,n_areas,fecha_in,fecha_fin):
         if key in areas_filtradas['elements']:
             retorno[key] = org[key]
 
-    return retorno
+    date_min = dt.strftime(date_min, "%m/%d/%Y")[0:10]
+    date_max = dt.strftime(date_max, "%m/%d/%Y")[0:10]
+
+    return retorno, no_resueltos, date_min, date_max
 
 
 
