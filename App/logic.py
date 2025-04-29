@@ -130,32 +130,32 @@ def req_1(catalog, start_date, end_date):
     """
     retorno = ''
     
-    # Convertir fechas de entrada a formato datetime
+    
     start_date = fecha_a_Datetime(start_date)
     end_date = fecha_a_Datetime(end_date)
     
-    # Obtener los valores (filas) en el rango de fechas
+    
     fechas_filtradas = rbt.values(catalog["Date_Occrd"]["data"], start_date, end_date)
     
-    # Lista para almacenar los crímenes que cumplen con el rango
+    
     crímenes_filtrados = al.new_list()
     
-    # Filtramos por las filas dentro del rango de fechas
+    
     for i in range(sl.size(fechas_filtradas)):
         fila = sl.get_element(fechas_filtradas, i)
         
         for crimen in fila["elements"]:
-            # Agregar crimen a la lista de filtrados
+            
             al.add_last(crímenes_filtrados, crimen)
     
-    # Ordenamos los crímenes por fecha (más reciente a más antiguo)
+    
     crímenes_ordenados = al.merge_sort(crímenes_filtrados, compare_crit_by_date)
 
-    # Mostrar los primeros 5 y los últimos 5 crímenes
+    
     if al.size(crímenes_ordenados) > 10:
         crímenes_ordenados = crímenes_ordenados["elements"][:5] + crímenes_ordenados["elements"][-5:]
     
-    # Formatear la salida
+   
     for crimen in crímenes_ordenados:
         fechaHora = str(crimen["DATE OCC"]).split(" ")
         retorno += (f"ID del crimen: {crimen['DR_NO']}\n"
