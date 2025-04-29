@@ -26,6 +26,13 @@ def remove_first(list):
     else: 
         raise Exception('IndexError: list index out of range')
     
+def remove(list, element):
+    if list['size'] > 0 and element in list['elements']:
+        i = list['elements'].index(element)
+        list['elements'].pop(i)
+        list['size'] -= 1
+    return list
+
 def remove_last(list):
     if list['size'] > 0:
         elemento = list['elements'].pop(list['size']-1)

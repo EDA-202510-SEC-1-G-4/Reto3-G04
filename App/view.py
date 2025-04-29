@@ -112,6 +112,10 @@ def print_req_5(control):
     """
     # TODO: Imprimir el resultado del requerimiento 5
     pass
+    n_areas = int(input('Numero de areas a consultar: '))
+    fecha_in = str(input('Fecha inicial de busqueda (MM/DD/YYYY): '))
+    fecha_fin = str(input('Fecha final de busqueda (MM/DD/YYYY): '))
+    print(log.req_5(control,n_areas,fecha_in,fecha_fin))
 
 
 def print_req_6(control):

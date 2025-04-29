@@ -233,13 +233,13 @@ def compare_crit_by_date(elm1,elm2):
 
     fecha1 = elm1["DATE OCC"]
     fecha2 = elm2["DATE OCC"]
-    area1 = elm1["AREA NAME"]
+    area1 = elm2["AREA NAME"]
     area2 = elm2["AREA NAME"]
     
     if fecha1 < fecha2:
         isSorted = True
     elif fecha1 == fecha2:
-        if area1 <= area2:
+        if area1 < area2:
             isSorted = True
     
     return isSorted
@@ -263,14 +263,18 @@ def req_4(catalog):
 
 def req_5(catalog,n_areas,fecha_in,fecha_fin):
     #Definición de variables generales:
-    fecha_in = dt.strptime(fecha_in,"%Y-%m-%d")
-    fecha_fin = dt.strptime(fecha_fin,"%Y-%m-%d")
-    areas = catalog['Area']['data']
-    filas = mp.value_set(areas)
-
-    return filas
-    
-    #Primer filtro (fecha):
+    fecha_in = fecha_a_Datetime(fecha_in)
+    fecha_fin = fecha_a_Datetime(fecha_fin)
+    rubro = catalog['Area']['data']
+    llaves = mp.key_set(rubro)
+    values = mp.value_set(rubro)
+    for i in range(values['size']):
+        filas = values['elements'][i]
+        for j in range(filas['size']):
+            fecha = filas['elements'][j]['DATE OCC']
+            if fecha > fecha_fin or fecha < fecha_in:
+                al.remove(filas,filas['elements'][j])
+    return rubro
     
 
 def req_6(catalog):
