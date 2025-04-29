@@ -233,13 +233,13 @@ def compare_crit_by_date(elm1,elm2):
 
     fecha1 = elm1["DATE OCC"]
     fecha2 = elm2["DATE OCC"]
-    area1 = elm2["AREA NAME"]
+    area1 = elm1["AREA NAME"]
     area2 = elm2["AREA NAME"]
     
     if fecha1 < fecha2:
         isSorted = True
     elif fecha1 == fecha2:
-        if area1 < area2:
+        if area1 <= area2:
             isSorted = True
     
     return isSorted

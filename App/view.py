@@ -36,7 +36,7 @@ def load_data(control):
     print(retorno)
     tiempo = log.delta_time(start,end)
     print(f"El timepo tomado fue de: {tiempo}")
-    
+
 def print_data(control, id):
     """
         Función que imprime un dato dado su ID
@@ -79,6 +79,7 @@ def print_req_2(control):
     """
     start_date = input("Ingrese la fecha de inicio del reporte (Date Rprtd) (formato MM/DD/YYYY): ")
     end_date = input("Ingrese la fecha de fin (formato MM/DD/YYYY): ")
+    print()
 
 
     start = log.get_time()
