@@ -48,30 +48,15 @@ def print_req_1(control):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
-    start_date = input("Ingrese la fecha de inicio (formato YYYY-MM-DD): ")
-    end_date = input("Ingrese la fecha de fin (formato YYYY-MM-DD): ")
+    start_date = input("Ingrese la fecha de inicio del reporte (Date Rprtd) (formato MM/DD/YYYY): ")
+    end_date = input("Ingrese la fecha de fin (formato MM/DD/YYYY): ")
 
-    start_time = log.get_time()  # Usar 'logic' en lugar de 'log'
-    result = log.req_1(control, start_date, end_date)  # Usar 'logic' en lugar de 'log'
-    total_records = len(result)
-
-    if not result:
-        print(f"No se encontraron crímenes entre las fechas {start_date} y {end_date}.")
-    else:
-        print(f"El número total de crímenes ocurridos entre {start_date} y {end_date} es: {total_records}")
-        
-        print("\nLos primeros 5 crímenes:")
-        for i, crime in enumerate(result[:5]):
-            print(f"{i+1}. {crime['DR_NO']} | {crime['DATE OCC']} | {crime['TIME OCC']} | {crime['AREA NAME']} | {crime['Crm Cd']} | {crime['LOCATION']}")
-        
-        print("\nLos últimos 5 crímenes:")
-        for i, crime in enumerate(result[-5:]):
-            print(f"{i+1}. {crime['DR_NO']} | {crime['DATE OCC']} | {crime['TIME OCC']} | {crime['AREA NAME']} | {crime['Crm Cd']} | {crime['LOCATION']}")
-
-    end_time = log.get_time()  # Usar 'logic' en lugar de 'log'
-    execution_time = log.delta_time(start_time, end_time)  # Usar 'logic' en lugar de 'log'
-    print(f"\nEl tiempo tomado fue de {execution_time} ms")
-    print("\n========================\n")
+    start = log.get_time()
+    resultado = log.req_1(control, start_date, end_date)
+    print(resultado)
+    end = log.get_time()
+    tiempo = log.delta_time(start,end)
+    print(f"El tiempo tomado fue de {tiempo}\n")
 
 def print_req_2(control):
     """
@@ -94,8 +79,15 @@ def print_req_3(control):
     """
         Función que imprime la solución del Requerimiento 3 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 3
-    pass
+    area_name = input("Ingrese el nombre del área: ")
+    N = int(input("Ingrese el número de crímenes a consultar: "))
+
+    start = log.get_time()
+    resultado = log.req_3(control, N, area_name)
+    print(resultado)
+    end = log.get_time()
+    tiempo = log.delta_time(start,end)
+    print(f"El tiempo tomado fue de {tiempo}\n")
 
 
 def print_req_4(control):
