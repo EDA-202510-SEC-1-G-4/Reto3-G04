@@ -56,11 +56,11 @@ def load_data(catalog, filename):
         catalog["ID"]["size"] += 1
 
         #Fecha en la que se reporto el crimen:
-        add_rbt(catalog['Date_Rptd']['data'],fila["Date Rptd"])
+        add_rbt(catalog['Date_Rptd']['data'],fila["Date Rptd"],fila)
         catalog["Date_Rptd"]["size"] += 1
 
         #Fecha en la que ocurrio el crimen:
-        add_rbt(catalog['Date_Occrd']['data'],fila["DATE OCC"])
+        add_rbt(catalog['Date_Occrd']['data'],fila["DATE OCC"],fila)
         catalog["Date_Occrd"]["size"] += 1
 
         #Areas:
@@ -74,11 +74,11 @@ def load_data(catalog, filename):
         catalog["Area"]["size"] += 1
 
         #Edad de la victima:
-        add_rbt(catalog['Edad']['data'],fila["Vict Age"])
+        add_rbt(catalog['Edad']['data'],fila["Vict Age"],fila)
         catalog["Edad"]["size"] += 1
 
         #Codigo del crimen:
-        add_rbt(catalog['Codigos']['data'],fila["Crm Cd"])
+        add_rbt(catalog['Codigos']['data'],fila["Crm Cd"],fila)
         
         catalog["Codigos"]["size"] += 1
 
@@ -101,14 +101,14 @@ def load_data(catalog, filename):
 
     return retorno
 
-def add_rbt (tree,key):
+def add_rbt (tree,key,value):
     exist = rbt.get(tree,key)
     if exist == None:
         lista = al.new_list()
-        al.add_last(lista,key)
+        al.add_last(lista,value)
         rbt.put(tree,key,lista)
     else:
-        al.add_last(exist,key)
+        al.add_last(exist,value)
         rbt.put(tree,key,exist)
             
     return tree
@@ -184,7 +184,9 @@ def sort_by_date_and_area(fila):
     # Retornamos una tupla con (fecha, hora, área)
     return (date_obj, time_obj, fila["AREA NAME"])
 
+def fecha_a_Datetime(fecha):
 
+    return dt.strptime(fecha,"%m/%d/%Y")
     
 
 def req_2(catalog,fecha_in,fecha_fin):
@@ -192,16 +194,19 @@ def req_2(catalog,fecha_in,fecha_fin):
     Retorna el resultado del requerimiento 2
     """
     retorno2 = ''
+    fecha_in = fecha_a_Datetime(fecha_in)
+    fecha_fin = fecha_a_Datetime(fecha_fin)
+    
     filtro = rbt.values(catalog["Date_Rptd"]["data"],fecha_in,fecha_fin)
     filtrados = al.new_list()
     
     for i in range(sl.size(filtro)):
-        fila = sl.get_element(filtro,i)
-        
-        if fila["Part 1-2"] == 1:
-            if fila["Status"] != "IC":
-                fechaHora = fila["DATE OCC"].split(" ")
-                al.add_last(filtrados, fila)
+        elm = sl.get_element(filtro,i)
+        for fila in elm["elements"]:
+            if fila["Part 1-2"] == 1:
+                if fila["Status"] != "IC":
+                    fechaHora = fila["DATE OCC"].split(" ")
+                    al.add_last(filtrados, fila)
     
     retorno = al.merge_sort(filtrados,compare_crit_by_date)  # O heapsort no se cual sea mejor lol
     reportes = retorno                

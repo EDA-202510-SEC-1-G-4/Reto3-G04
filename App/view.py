@@ -29,9 +29,14 @@ def load_data(control):
     Carga los datos
     """
     filename = "/Crime_in_LA_20.csv"
-    retorno = log.load_data(control, filename)
-    print(retorno)
+    start = log.get_time()
 
+    retorno = log.load_data(control, filename)
+    end = log.get_time()
+    print(retorno)
+    tiempo = log.delta_time(start,end)
+    print(f"El timepo tomado fue de: {tiempo}")
+    
 def print_data(control, id):
     """
         Función que imprime un dato dado su ID
