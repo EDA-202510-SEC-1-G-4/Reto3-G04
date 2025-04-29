@@ -266,20 +266,54 @@ def req_5(catalog,n_areas,fecha_in,fecha_fin):
     fecha_in = fecha_a_Datetime(fecha_in)
     fecha_fin = fecha_a_Datetime(fecha_fin)
     rubro = catalog['Area']['data']
-    llaves = mp.key_set(rubro)
+    keys = mp.key_set(rubro)
     values = mp.value_set(rubro)
-    for i in range(values['size']):
+
+    #variables auxiliares:
+    areas_filtradas = al.new_list()
+    
+    #simplificar el hashmap en un diccionario:
+    org = {}
+    for i in range(keys['size']):
+        org[keys['elements'][i]] = values['elements'][i]
+    
+    #filtro por fechas el diccionario:
+    for i in range(keys['size']):
         filas = values['elements'][i]
         j = 0
-        while j < filas['size']:
+        while j < org[keys['elements'][i]]['size']:
             fecha = filas['elements'][j]['DATE OCC']
-            if fecha > fecha_fin or fecha < fecha_in:
-                al.remove(filas,filas['elements'][j])
-                j += 1
+            if fecha < fecha_in or fecha > fecha_fin:
+                al.remove(org[keys['elements'][i]],org[keys['elements'][i]]['elements'][j])
             j += 1
-    
-    return filas
-    
+
+    #unir area con size para ordenar: 
+    ordenados = al.new_list()
+    for area in org:
+        al.add_last(ordenados,(area,org[area]['size']))
+        al.add_last(areas_filtradas,area)
+    ordenados = al.merge_sort(ordenados,cmp_function_req5)
+    seleccionados = ordenados['elements'][0:n_areas]
+
+    #Preparar retorno:
+    retorno = {}
+    for key in org:
+        if key in areas_filtradas['elements']:
+            retorno[key] = org[key]
+
+    return retorno
+
+
+
+    return seleccionados
+
+def cmp_function_req5(elem1,elem2):
+    area1, size1 = elem1
+    area2, size2 = elem2
+    res = False
+    if size1 > size2:
+        res = True
+    return res
 
 def req_6(catalog):
     """
