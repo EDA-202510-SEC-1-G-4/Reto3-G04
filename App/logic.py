@@ -278,6 +278,9 @@ def req_5(catalog,n_areas,fecha_in,fecha_fin):
     fecha_in = dt.strptime(fecha_in,"%Y-%m-%d")
     fecha_fin = dt.strptime(fecha_fin,"%Y-%m-%d")
     areas = catalog['Area']['data']
+    filas = mp.value_set(areas)
+
+    return filas
     
     #Primer filtro (fecha):
     
