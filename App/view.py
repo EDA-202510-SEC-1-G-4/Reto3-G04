@@ -72,8 +72,16 @@ def print_req_2(control):
     """
         Función que imprime la solución del Requerimiento 2 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 2
-    pass
+    start_date = input("Ingrese la fecha de inicio del reporte (Date Rprtd) (formato MM/DD/YYYY): ")
+    end_date = input("Ingrese la fecha de fin (formato MM/DD/YYYY): ")
+
+
+    start = log.get_time()
+    resultado = log.req_2(control, start_date, end_date)
+    print(resultado)
+    end = log.get_time()
+    tiempo = log.delta_time(start,end)
+    print(f"El tiempo tomado fue de {tiempo}\n")
 
 
 def print_req_3(control):

@@ -10,7 +10,6 @@ import os
 
 
 
-
 csv.field_size_limit(2147483647)
 data_dir = os.path.dirname(os.path.realpath('__file__')) + '/Data/'
 
@@ -198,12 +197,57 @@ def sort_by_date_and_area(fila):
 
     
 
-def req_2(catalog):
+def req_2(catalog,fecha_in,fecha_fin):
     """
     Retorna el resultado del requerimiento 2
     """
-    # TODO: Modificar el requerimiento 2
-    pass
+    retorno2 = ''
+    filtro = rbt.values(catalog["Date_Rptd"]["data"],fecha_in,fecha_fin)
+    filtrados = al.new_list()
+    
+    for i in range(sl.size(filtro)):
+        fila = sl.get_element(filtro,i)
+        
+        if fila["Part 1-2"] == 1:
+            if fila["Status"] != "IC":
+                fechaHora = fila["DATE OCC"].split(" ")
+                al.add_last(filtrados, fila)
+    
+    retorno = al.merge_sort(filtrados,compare_crit_by_date)  # O heapsort no se cual sea mejor lol
+    reportes = retorno                
+    if al.size(retorno) > 10:
+        
+        reportes = retorno["elements"][:5] + retorno["elements"][-5:]
+    
+    for fila in reportes:
+        retorno2 += (f"ID del crimen: {fila['DR_NO']}\n"
+                 f"Fecha del incidente: {fechaHora[0]}\n"
+                 f"Hora del incidente: {fechaHora[1]}\n"
+                 f"Área: {fila['AREA NAME']}\n"
+                 f"Subárea: {fila['Sub Area']}\n"
+                 f"Clasificación: Parte 2\n"
+                 f"Código del crimen: {fila['Crm Cd']}\n"
+                 f"Estado del caso: {fila['Status Desc']}\n"
+                 f"\n===========================\n")
+        
+    return retorno2
+                
+
+def compare_crit_by_date(elm1,elm2):
+    isSorted = False
+
+    fecha1 = dt.strptime(elm1["DATE OCC"], "%Y/%m/%d %I:%M:%S %p")
+    fecha2 = dt.strptime(elm2["DATE OCC"], "%Y/%m/%d %I:%M:%S %p")
+    area1 = elm2["AREA NAME"]
+    area2 = elm2["AREA NAME"]
+    
+    if fecha1 > fecha2:
+        isSorted = True
+    elif fecha1 == fecha2:
+        if area1 > area2:
+            isSorted = True
+    
+    return isSorted
 
 
 def req_3(catalog):
