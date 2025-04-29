@@ -188,9 +188,8 @@ def req_2(catalog,fecha_in,fecha_fin):
     for i in range(sl.size(filtro)):
         elm = sl.get_element(filtro,i)
         for fila in elm["elements"]:
-            if fila["Part 1-2"] == 1:
+            if int(fila["Part 1-2"]) == 1:
                 if fila["Status"] != "IC":
-                    fechaHora = fila["DATE OCC"].split(" ")
                     al.add_last(filtrados, fila)
     
     retorno = al.merge_sort(filtrados,compare_crit_by_date)  # O heapsort no se cual sea mejor lol
@@ -200,11 +199,12 @@ def req_2(catalog,fecha_in,fecha_fin):
         reportes = retorno["elements"][:5] + retorno["elements"][-5:]
     
     for fila in reportes:
+        fechaHora = str(fila["DATE OCC"]).split(" ")
         retorno2 += (f"ID del crimen: {fila['DR_NO']}\n"
                  f"Fecha del incidente: {fechaHora[0]}\n"
                  f"Hora del incidente: {fechaHora[1]}\n"
                  f"Área: {fila['AREA NAME']}\n"
-                 f"Subárea: {fila['Sub Area']}\n"
+                 f"Subárea: {fila['Rpt Dist No']}\n"
                  f"Clasificación: Parte 2\n"
                  f"Código del crimen: {fila['Crm Cd']}\n"
                  f"Estado del caso: {fila['Status Desc']}\n"
@@ -221,10 +221,10 @@ def compare_crit_by_date(elm1,elm2):
     area1 = elm2["AREA NAME"]
     area2 = elm2["AREA NAME"]
     
-    if fecha1 > fecha2:
+    if fecha1 < fecha2:
         isSorted = True
     elif fecha1 == fecha2:
-        if area1 > area2:
+        if area1 < area2:
             isSorted = True
     
     return isSorted
@@ -286,24 +286,65 @@ def compare_crit_by_date_desc(elm1, elm2):
     return False
 
 
-def req_4(catalog):
+def req_4(catalog,N,edad_in,edad_fin):
     """
     Retorna el resultado del requerimiento 4
     """
-    # TODO: Modificar el requerimiento 4
-    pass
+    
+    filtro = rbt.values(catalog["Edad"]["data"],edad_in,edad_fin)
+    leves = al.new_list()
+    graves = al.new_list()
+    for i in range(sl.size(filtro)):
+        elm = sl.get_element(filtro,i)
+        for fila in elm["elements"]:
+            if int(fila["Part 1-2"]) == 1:
+                al.add_last(graves,fila)
+            else:
+                al.add_last(leves,fila)
 
+    ordenadosLeve = al.merge_sort(leves,sort_crit_by_age)
+    ordenadosGrave = al.merge_sort(graves,sort_crit_by_age) 
+
+    ordenadosLeve = ordenadosLeve["elements"][:N]   
+    ordenadosGrave = ordenadosGrave["elements"][:N]
+
+
+
+
+def sort_crit_by_age(elm1,elm2):
+    isSorted = False
+
+    fecha1 = elm1["Vict Age"]
+    fecha2 = elm2["Vict Age"]
+    area1 = elm2["DATE OCC"]
+    area2 = elm2["DATE OCC"]
+    
+    if fecha1 > fecha2:
+        isSorted = True
+    elif fecha1 == fecha2:
+        if area1 < area2:
+            isSorted = True
+    
+    return isSorted
 
 def req_5(catalog,n_areas,fecha_in,fecha_fin):
     #Definición de variables generales:
-    fecha_in = dt.strptime(fecha_in,"%Y-%m-%d")
-    fecha_fin = dt.strptime(fecha_fin,"%Y-%m-%d")
-    areas = catalog['Area']['data']
-    filas = mp.value_set(areas)
-
-    return filas
+    fecha_in = fecha_a_Datetime(fecha_in)
+    fecha_fin = fecha_a_Datetime(fecha_fin)
+    rubro = catalog['Area']['data']
+    llaves = mp.key_set(rubro)
+    values = mp.value_set(rubro)
+    for i in range(values['size']):
+        filas = values['elements'][i]
+        j = 0
+        while j < filas['size']:
+            fecha = filas['elements'][j]['DATE OCC']
+            if fecha > fecha_fin or fecha < fecha_in:
+                al.remove(filas,filas['elements'][j])
+                j += 1
+            j += 1
     
-    #Primer filtro (fecha):
+    return filas
     
 
 def req_6(catalog):
