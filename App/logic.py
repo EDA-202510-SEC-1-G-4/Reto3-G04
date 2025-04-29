@@ -270,11 +270,15 @@ def req_5(catalog,n_areas,fecha_in,fecha_fin):
     values = mp.value_set(rubro)
     for i in range(values['size']):
         filas = values['elements'][i]
-        for j in range(filas['size']):
+        j = 0
+        while j < filas['size']:
             fecha = filas['elements'][j]['DATE OCC']
             if fecha > fecha_fin or fecha < fecha_in:
                 al.remove(filas,filas['elements'][j])
-    return rubro
+                j += 1
+            j += 1
+    
+    return filas
     
 
 def req_6(catalog):
