@@ -203,9 +203,8 @@ def req_2(catalog,fecha_in,fecha_fin):
     for i in range(sl.size(filtro)):
         elm = sl.get_element(filtro,i)
         for fila in elm["elements"]:
-            if fila["Part 1-2"] == 1:
+            if int(fila["Part 1-2"]) == 1:
                 if fila["Status"] != "IC":
-                    fechaHora = fila["DATE OCC"].split(" ")
                     al.add_last(filtrados, fila)
     
     retorno = al.merge_sort(filtrados,compare_crit_by_date)  # O heapsort no se cual sea mejor lol
@@ -215,11 +214,12 @@ def req_2(catalog,fecha_in,fecha_fin):
         reportes = retorno["elements"][:5] + retorno["elements"][-5:]
     
     for fila in reportes:
+        fechaHora = str(fila["DATE OCC"]).split(" ")
         retorno2 += (f"ID del crimen: {fila['DR_NO']}\n"
                  f"Fecha del incidente: {fechaHora[0]}\n"
                  f"Hora del incidente: {fechaHora[1]}\n"
                  f"Área: {fila['AREA NAME']}\n"
-                 f"Subárea: {fila['Sub Area']}\n"
+                 f"Subárea: {fila['Rpt Dist No']}\n"
                  f"Clasificación: Parte 2\n"
                  f"Código del crimen: {fila['Crm Cd']}\n"
                  f"Estado del caso: {fila['Status Desc']}\n"
@@ -236,10 +236,10 @@ def compare_crit_by_date(elm1,elm2):
     area1 = elm2["AREA NAME"]
     area2 = elm2["AREA NAME"]
     
-    if fecha1 > fecha2:
+    if fecha1 < fecha2:
         isSorted = True
     elif fecha1 == fecha2:
-        if area1 > area2:
+        if area1 < area2:
             isSorted = True
     
     return isSorted
