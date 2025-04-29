@@ -128,46 +128,61 @@ def req_1(catalog, start_date, end_date):
     """
     Retorna el resultado del requerimiento 1
     """
-    retorno = ''
-    
-    
-    start_date = fecha_a_Datetime(start_date)
-    end_date = fecha_a_Datetime(end_date)
-    
-    
-    fechas_filtradas = rbt.values(catalog["Date_Occrd"]["data"], start_date, end_date)
-    
-    
-    crímenes_filtrados = al.new_list()
-    
-    
-    for i in range(sl.size(fechas_filtradas)):
-        fila = sl.get_element(fechas_filtradas, i)
-        
-        for crimen in fila["elements"]:
-            
-            al.add_last(crímenes_filtrados, crimen)
-    
-    
-    crímenes_ordenados = al.merge_sort(crímenes_filtrados, compare_crit_by_date)
+    start_date = dt.strptime(start_date, "%Y-%m-%d")
+    end_date = dt.strptime(end_date, "%Y-%m-%d")
 
+    # Obtener los registros de crímenes (las filas con la información de cada crimen)
+    filas = catalog['filas']['elements']
     
-    if al.size(crímenes_ordenados) > 10:
-        crímenes_ordenados = crímenes_ordenados["elements"][:5] + crímenes_ordenados["elements"][-5:]
-    
-   
-    for crimen in crímenes_ordenados:
-        fechaHora = str(crimen["DATE OCC"]).split(" ")
-        retorno += (f"ID del crimen: {crimen['DR_NO']}\n"
-                    f"Fecha del incidente: {fechaHora[0]}\n"
-                    f"Hora del incidente: {fechaHora[1]}\n"
-                    f"Área: {crimen['AREA NAME']}\n"
-                    f"Código del crimen: {crimen['Crm Cd']}\n"
-                    f"Dirección: {crimen['LOCATION']}\n"
-                    f"\n===========================\n")
+    # Lista para almacenar los crímenes que cumplen con el criterio de fechas
+    crímenes_filtrados = []
 
-    return retorno
+    # Filtrar crímenes entre las fechas proporcionadas
+    for fila in filas:
+        try:
+            # Formato para fecha y hora (12 horas AM/PM)
+            crime_date = dt.strptime(fila["DATE OCC"], "%m/%d/%Y %I:%M:%S %p")  # Incluye AM/PM
+        except ValueError:
+            # Si la fecha no tiene hora, solo consideramos la fecha
+            crime_date = dt.strptime(fila["DATE OCC"], "%m/%d/%Y")
+
+        # Si el crimen ocurrió dentro del rango de fechas
+        if start_date <= crime_date <= end_date:
+            crímenes_filtrados.append(fila)
+
+    # Ordenar los crímenes primero por fecha (más reciente) y luego por área en caso de empate
+    crímenes_filtrados.sort(key=sort_by_date_and_area)
+
+    # Generar la respuesta en el formato solicitado
+    resultado = []
+    for fila in crímenes_filtrados:
+        resultado.append({
+            "DR_NO": fila['DR_NO'],
+            "DATE OCC": fila['DATE OCC'],
+            "TIME OCC": fila['TIME OCC'],
+            "AREA NAME": fila['AREA NAME'],
+            "Crm Cd": fila['Crm Cd'],
+            "LOCATION": fila['LOCATION']
+        })
+
+    # Retornar los resultados
+    return resultado
+
+def sort_by_date_and_area(fila):
+    """
+    Función auxiliar para ordenar por fecha y hora, luego por área.
+    Retorna una tupla para realizar la comparación de manera explícita.
+    """
+    # Convertimos la fecha y la hora en objetos datetime para que puedan ser comparados
+    try:
+        date_obj = dt.strptime(fila["DATE OCC"], "%m/%d/%Y %I:%M:%S %p")  # Usando AM/PM
+    except ValueError:
+        date_obj = dt.strptime(fila["DATE OCC"], "%m/%d/%Y")  # En caso de solo fecha
     
+    time_obj = fila["TIME OCC"]
+    
+    # Retornamos una tupla con (fecha, hora, área)
+    return (date_obj, time_obj, fila["AREA NAME"])
 
 def fecha_a_Datetime(fecha):
 
@@ -230,67 +245,22 @@ def compare_crit_by_date(elm1,elm2):
     return isSorted
 
 
-def req_3(catalog, N, area_name):
+def req_3(catalog):
     """
     Retorna el resultado del requerimiento 3
     """
-    retorno = ''
-    
-    # Obtener la lista de crímenes para el área especificada
-    crímenes_area = mp.get(catalog["Area"]["data"], area_name)
-    
-    # Si no hay crímenes para el área, retornar
-    if crímenes_area is None:
-        return f"No se encontraron crímenes para el área: {area_name}"
-    
-    # Listar todos los crímenes en el área
-    crímenes_filtrados = al.new_list()
-    for fila in crímenes_area["elements"]:
-        al.add_last(crímenes_filtrados, fila)
-    
-    # Ordenar los crímenes por fecha en orden descendente, si las fechas son iguales, ordenar por área
-    crímenes_ordenados = al.merge_sort(crímenes_filtrados, compare_crit_by_date_desc)
-    
-    # Tomar los primeros N crímenes
-    crímenes_n = crímenes_ordenados["elements"][:N]
-    
-    # Mostrar la cantidad total de crímenes y la información de los primeros N crímenes
-    retorno += f"Total de crímenes reportados en el área {area_name}: {len(crímenes_area['elements'])}\n"
-    
-    for crimen in crímenes_n:
-        fechaHora = str(crimen["DATE OCC"]).split(" ")
-        retorno += (f"ID del crimen: {crimen['DR_NO']}\n"
-                    f"Fecha del incidente: {fechaHora[0]}\n"
-                    f"Hora del incidente: {fechaHora[1]}\n"
-                    f"Área: {crimen['AREA NAME']}\n"
-                    f"Subárea: {crimen['Rpt Dist No']}\n"
-                    f"Parte del crimen: {crimen['Part 1-2']}\n"
-                    f"Código del crimen: {crimen['Crm Cd']}\n"
-                    f"Estado del caso: {crimen['Status Desc']}\n"
-                    f"Dirección: {crimen['LOCATION']}\n"
-                    f"\n===========================\n")
-    
-    return retorno
-
-def compare_crit_by_date_desc(elm1, elm2):
-    """
-    Función para comparar dos crímenes. Compara por fecha (más reciente a más antiguo),
-    si las fechas son iguales, compara por nombre del área (en orden descendente).
-    """
-    # Comparar por fecha (más reciente primero)
-    if elm1["DATE OCC"] > elm2["DATE OCC"]:
-        return True
-    elif elm1["DATE OCC"] == elm2["DATE OCC"]:
-        # Si las fechas son iguales, comparar por área (de mayor a menor)
-        return elm1["AREA NAME"] > elm2["AREA NAME"]
-    return False
+    # TODO: Modificar el requerimiento 3
+    pass
 
 
 def req_4(catalog,N,edad_in,edad_fin):
     """
     Retorna el resultado del requerimiento 4
     """
-    
+    retornoGraves = ""
+    retornoLeves = ""
+    edad_fin = str(edad_fin)
+    edad_in = str(edad_in)
     filtro = rbt.values(catalog["Edad"]["data"],edad_in,edad_fin)
     leves = al.new_list()
     graves = al.new_list()
@@ -308,6 +278,35 @@ def req_4(catalog,N,edad_in,edad_fin):
     ordenadosLeve = ordenadosLeve["elements"][:N]   
     ordenadosGrave = ordenadosGrave["elements"][:N]
 
+    for elm in ordenadosGrave:
+        fechaHora = str(elm["DATE OCC"]).split(" ")
+        retornoGraves += (f"Identificador: {elm['DR_NO']}\n"
+                  f"Fecha del incidente: {fechaHora[0]}\n"
+                  f"Hora del incidente: {fechaHora[1]}\n"
+                  f"Área: {elm['AREA NAME']}\n"
+                  f"Subárea: {elm['Rpt Dist No']}\n"
+                  f"Gravedad del crimen: Grave (1)\n"
+                  f"Código del crimen: {elm['Crm Cd']}\n"
+                  f"Edad de la víctima: {elm['Vict Age']}\n"
+                  f"Estado del caso: {elm['Status Desc']}\n"
+                  f"Dirección del crimen: {elm['LOCATION']}\n"
+                  f"\n===========================\n")
+        
+    for elm in ordenadosLeve:
+                fechaHora = str(elm["DATE OCC"]).split(" ")
+                retornoLeves += (f"Identificador: {elm['DR_NO']}\n"
+                          f"Fecha del incidente: {fechaHora[0]}\n"
+                          f"Hora del incidente: {fechaHora[1]}\n"
+                          f"Área: {elm['AREA NAME']}\n"
+                          f"Subárea: {elm['Rpt Dist No']}\n"
+                          f"Gravedad del crimen: Leve (2)\n"
+                          f"Código del crimen: {elm['Crm Cd']}\n"
+                          f"Edad de la víctima: {elm['Vict Age']}\n"
+                          f"Estado del caso: {elm['Status Desc']}\n"
+                          f"Dirección del crimen: {elm['LOCATION']}\n"
+                          f"\n===========================\n")
+    return retornoGraves, retornoLeves
+
 
 
 
@@ -322,7 +321,7 @@ def sort_crit_by_age(elm1,elm2):
     if fecha1 > fecha2:
         isSorted = True
     elif fecha1 == fecha2:
-        if area1 < area2:
+        if area1 > area2:
             isSorted = True
     
     return isSorted

@@ -94,8 +94,16 @@ def print_req_4(control):
     """
         Función que imprime la solución del Requerimiento 4 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    N = int(input("Ingrese el número de crímenes a consultar: "))
+    start_age = int(input("Ingrese la edad inicial: "))
+    end_age = int(input("Ingrese la edad final: "))
+    start = log.get_time()
+    resultadoGraves, resultadoLeves = log.req_4(control, N, start_age, end_age)
+    print("Resultado de crímenes graves:\n", resultadoGraves)
+    print("Resultado de crímenes leves:\n", resultadoLeves)
+    end = log.get_time()
+    tiempo = log.delta_time(start, end)
+    print(f"El tiempo tomado fue de {tiempo}\n")
 
 
 def print_req_5(control):
