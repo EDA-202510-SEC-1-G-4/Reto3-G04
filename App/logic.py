@@ -102,16 +102,16 @@ def load_data(catalog, filename):
     return retorno
 
 def add_rbt (tree,key):
-        exist = rbt.get(tree,key)
-        if exist == None:
-            lista = al.new_list()
-            al.add_last(lista,key)
-            rbt.put(tree,key,lista)
-        else:
-            al.add_last(exist,key)
-            rbt.put(tree,key,exist)
+    exist = rbt.get(tree,key)
+    if exist == None:
+        lista = al.new_list()
+        al.add_last(lista,key)
+        rbt.put(tree,key,lista)
+    else:
+        al.add_last(exist,key)
+        rbt.put(tree,key,exist)
             
-        return tree
+    return tree
          
 
 
