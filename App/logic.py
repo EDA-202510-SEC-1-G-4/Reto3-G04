@@ -381,10 +381,6 @@ def req_5(catalog,n_areas,fecha_in,fecha_fin):
 
     return retorno, no_resueltos, date_min, date_max
 
-
-
-    return seleccionados
-
 def cmp_function_req5(elem1,elem2):
     area1, size1 = elem1
     area2, size2 = elem2
