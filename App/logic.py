@@ -353,6 +353,7 @@ def req_5(catalog,n_areas,fecha_in,fecha_fin):
             fecha = filas['elements'][j]['DATE OCC']
             if fecha < fecha_in or fecha > fecha_fin:
                 al.remove(org[keys['elements'][i]],org[keys['elements'][i]]['elements'][j])
+                j -= 1
             else:
                 if org[keys['elements'][i]]['elements'][j]['Status Desc'] == "Invest Cont":
                     no_resueltos += 1
@@ -389,12 +390,30 @@ def cmp_function_req5(elem1,elem2):
         res = True
     return res
 
-def req_6(catalog):
-    """
-    Retorna el resultado del requerimiento 6
-    """
-    # TODO: Modificar el requerimiento 6
-    pass
+def req_6(catalog,n_areas,sex_vict,month):
+    rubro = catalog['Area']['data']
+    keys = mp.key_set(rubro)
+    values = mp.value_set(rubro)
+
+    org = {}
+    for i in range(keys['size']):
+        org[keys['elements'][i]] = values['elements'][i]
+    
+    #filtro por sexo y mes el diccionario:
+    for i in range(keys['size']):
+        filas = values['elements'][i]
+        j = 0
+        while j < org[keys['elements'][i]]['size']:
+            sexo = filas['elements'][j]['Vict Sex']
+            fecha = filas['elements'][j]['DATE OCC']
+            mes = int(dt.strftime(fecha,"%m/%d/%Y")[0:2])
+            if sexo != sex_vict and mes != month:
+                al.remove(org[keys['elements'][i]],org[keys['elements'][i]]['elements'][j])
+                j -= 1
+            j += 1
+
+    return org
+
 
 
 def req_7(catalog):

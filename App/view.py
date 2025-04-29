@@ -130,12 +130,11 @@ def print_req_5(control):
 
 
 def print_req_6(control):
-    """
-        Función que imprime la solución del Requerimiento 6 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 6
-    pass
-
+    n_areas = int(input("Numero de areas a consultar: "))
+    sex_vict = str(input("Sexo de las victimas: "))
+    month = int(input("Mes en el que ocurrieron los crimenes (MM): "))
+    data = log.req_6(control,n_areas,sex_vict,month)
+    print(data)
 
 def print_req_7(control):
     """
