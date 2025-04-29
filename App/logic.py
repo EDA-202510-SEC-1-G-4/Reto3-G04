@@ -57,24 +57,12 @@ def load_data(catalog, filename):
 
         #Fecha en la que se reporto el crimen:
         exist = rbt.get(catalog['Date_Rptd']['data'],fila["Date Rptd"])
-        if exist == None:
-            lista = al.new_list()
-            al.add_last(lista,fila)
-            rbt.put(catalog["Date_Rptd"]["data"],fila["Date Rptd"],lista)
-        else:
-            al.add_last(exist,fila)
-            rbt.put(catalog["Date_Rptd"]["data"],fila["Date Rptd"],exist)
+        add_rbt(catalog['Date_Rptd']['data'],fila["Date Rptd"])
         catalog["Date_Rptd"]["size"] += 1
 
         #Fecha en la que ocurrio el crimen:
         exist = rbt.get(catalog['Date_Occrd']['data'],fila["DATE OCC"])
-        if exist == None:
-            lista = al.new_list()
-            al.add_last(lista,fila)
-            rbt.put(catalog["Date_Occrd"]["data"],fila["DATE OCC"],lista)
-        else:
-            al.add_last(exist,fila)
-            rbt.put(catalog["Date_Occrd"]["data"],fila["DATE OCC"],exist)
+        add_rbt(catalog['Date_Occrd']['data'],fila["DATE OCC"])
         catalog["Date_Occrd"]["size"] += 1
 
         #Areas:
@@ -89,26 +77,15 @@ def load_data(catalog, filename):
 
 
         #Edad de la victima:
-        exist = rbt.get(catalog['Edad']['data'],fila["Vict Age"])
-        if exist == None:
-            lista = al.new_list()
-            al.add_last(lista,fila)
-            rbt.put(catalog["Edad"]["data"],fila["Vict Age"],lista)
-        else:
-            al.add_last(exist,fila)
-            rbt.put(catalog["Edad"]["data"],fila["Vict Age"],exist)
+        
+        add_rbt(catalog['Edad']['data'],fila["Vict Age"])
         catalog["Edad"]["size"] += 1
 
 
         #Codigo del crimen:
-        exist = rbt.get(catalog['Codigos']['data'],fila["Crm Cd"])
-        if exist == None:
-            lista = al.new_list()
-            al.add_last(lista,fila)
-            rbt.put(catalog["Codigos"]["data"],fila["Crm Cd"],lista)
-        else:
-            al.add_last(exist,fila)
-            rbt.put(catalog["Codigos"]["data"],fila["Crm Cd"],exist)
+        
+        add_rbt(catalog['Codigos']['data'],fila["Crm Cd"])
+        
         catalog["Codigos"]["size"] += 1
 
         al.add_last(catalog["filas"],fila)
@@ -130,6 +107,18 @@ def load_data(catalog, filename):
 
     return retorno
 
+def add_rbt (tree,key):
+        exist = rbt.get(tree,key)
+        if exist == None:
+            lista = al.new_list()
+            al.add_last(lista,key)
+            rbt.put(tree,key,lista)
+        else:
+            al.add_last(exist,key)
+            rbt.put(tree,key,exist)
+            
+        return tree
+         
 
 
 
