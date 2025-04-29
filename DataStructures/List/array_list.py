@@ -213,7 +213,7 @@ def merge_sorted_arrays(lista1, lista2, cmp_function):
 
 
     while i < lista1['size'] and j < lista2['size']:
-        if cmp_function(lista1['elements'][i], lista2['elements'][j]) <= 0:
+        if cmp_function(lista1['elements'][i], lista2['elements'][j]) == True:
             resultado['elements'].append(lista1['elements'][i])
             i += 1
         else:
