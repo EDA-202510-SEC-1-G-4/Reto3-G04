@@ -56,12 +56,10 @@ def load_data(catalog, filename):
         catalog["ID"]["size"] += 1
 
         #Fecha en la que se reporto el crimen:
-        exist = rbt.get(catalog['Date_Rptd']['data'],fila["Date Rptd"])
         add_rbt(catalog['Date_Rptd']['data'],fila["Date Rptd"])
         catalog["Date_Rptd"]["size"] += 1
 
         #Fecha en la que ocurrio el crimen:
-        exist = rbt.get(catalog['Date_Occrd']['data'],fila["DATE OCC"])
         add_rbt(catalog['Date_Occrd']['data'],fila["DATE OCC"])
         catalog["Date_Occrd"]["size"] += 1
 
@@ -75,15 +73,11 @@ def load_data(catalog, filename):
             mp.put(catalog["Area"]["data"],fila["AREA NAME"],lista)
         catalog["Area"]["size"] += 1
 
-
         #Edad de la victima:
-        
         add_rbt(catalog['Edad']['data'],fila["Vict Age"])
         catalog["Edad"]["size"] += 1
 
-
         #Codigo del crimen:
-        
         add_rbt(catalog['Codigos']['data'],fila["Crm Cd"])
         
         catalog["Codigos"]["size"] += 1
