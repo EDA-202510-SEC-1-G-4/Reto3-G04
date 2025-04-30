@@ -489,12 +489,73 @@ def cmp_function_req6(elem1,elem2):
     return res
 
 
-def req_7(catalog):
+def req_7(catalog,N,sexo,edad_in,edad_fin):
     """
     Retorna el resultado del requerimiento 7
     """
-    # TODO: Modificar el requerimiento 7
-    pass
+    edad_fin = str(edad_fin)
+    edad_in = str(edad_in)
+    crimenes = {}
+    retornos = al.new_list()
+    
+
+    filtro = rbt.values(catalog["Edad"]["data"],edad_in,edad_fin)
+    
+    for i in range(sl.size(filtro)):
+        elm = sl.get_element(filtro,i)
+        for fila in elm["elements"]:
+            if fila["Vict Sex"] == sexo:
+                descripcion = fila["Crm Cd"]
+                if descripcion not in crimenes:
+                    crimenes[descripcion] = {
+                        "total": 0,
+                        "por_edad": {},
+                        "por_año": {}
+                    }
+                # Incrementar el conteo total
+                crimenes[descripcion]["total"] += 1
+
+                # Contar por edad
+                edad = fila["Vict Age"]
+                if edad not in crimenes[descripcion]["por_edad"]:
+                    crimenes[descripcion]["por_edad"][edad] = 0
+                crimenes[descripcion]["por_edad"][edad] += 1
+
+                # Contar por año
+                año = fila["DATE OCC"].year
+                if año not in crimenes[descripcion]["por_año"]:
+                    crimenes[descripcion]["por_año"][año] = 0
+                crimenes[descripcion]["por_año"][año] += 1
+
+    # Convertir el diccionario de crímenes en una lista para ordenar
+    crimenes_lista = al.new_list()
+    for descripcion, datos in crimenes.items():
+        al.add_last(crimenes_lista, (descripcion, datos))
+
+    # Ordenar los crímenes por cantidad total (de mayor a menor) usando quick_sort
+    al.quick_sort(crimenes_lista, comp_llaves)
+
+    # Seleccionar los N crímenes más comunes
+    top_crimenes = crimenes_lista["elements"][:N]
+
+    retorno = ""
+    for descripcion, datos in top_crimenes:
+        retorno += f"Codigo del crimen: {descripcion}\n"
+        retorno += f"Cantidad total de crímenes: {datos['total']}\n"
+        retorno += "Cantidad de crímenes por edad de la víctima:\n"
+        for edad, cantidad in datos["por_edad"].items():
+            retorno += f"  - Edad {edad}: {cantidad}\n"
+        retorno += "Cantidad de crímenes por año:\n"
+        for año, cantidad in datos["por_año"].items():
+            retorno += f"  - Año {año}: {cantidad}\n"
+        retorno += "-" * 50 + "\n"
+
+    return retorno
+    
+        
+    
+def comp_llaves(crimen1,crimen2):
+    return crimen1[1]["total"] > crimen2[1]["total"]
 
 def haversine(lat1, lon1, lat2, lon2):
     # Convertir de grados a radianes

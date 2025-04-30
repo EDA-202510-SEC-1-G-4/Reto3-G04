@@ -158,8 +158,24 @@ def print_req_7(control):
     """
         Función que imprime la solución del Requerimiento 7 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 7
-    pass
+    # Solicitar los inputs necesarios al usuario
+    N = int(input("Ingrese el número de crímenes más comunes a consultar: "))
+    sexo = input("Ingrese el sexo de las víctimas (M/F): ").strip().upper()
+    edad_in = int(input("Ingrese la edad mínima de las víctimas: "))
+    edad_fin = int(input("Ingrese la edad máxima de las víctimas: "))
+
+    # Medir el tiempo de ejecución
+    start = log.get_time()
+    resultado = log.req_7(control, N, sexo, edad_in, edad_fin)
+    end = log.get_time()
+
+    # Imprimir los resultados
+    print("\nResultados del Requerimiento 7:")
+    print(resultado)
+
+    # Calcular y mostrar el tiempo de ejecución
+    tiempo = log.delta_time(start, end)
+    print(f"\nEl tiempo tomado fue de {tiempo} ms\n")
 
 
 def print_req_8(control):
