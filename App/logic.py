@@ -139,22 +139,22 @@ def req_1(catalog, start_date, end_date):
     filas = catalog['filas']['elements']
     
     
-    crímenes_filtrados = []
+    crímenes_filtrados = al.new_list()
     
    
     for fila in filas:
         
-        crime_date = fecha_a_Datetime(fila["DATE OCC"])  
+        crime_date = fila["DATE OCC"]
         
        
         if start_date <= crime_date <= end_date:
-            crímenes_filtrados.append(fila)
+            al.add_last(crímenes_filtrados,fila)
     
     
-    crímenes_ordenados = al.merge_sort(crímenes_filtrados, compare_crit_by_date)
+    al.merge_sort(crímenes_filtrados, compare_crit_by_date)
 
     
-    for fila in crímenes_ordenados:
+    for fila in crímenes_filtrados["elements"]:
         fechaHora = str(fila["DATE OCC"]).split(" ")
         retorno += (f"ID del crimen: {fila['DR_NO']}\n"
                     f"Fecha del incidente: {fechaHora[0]}\n"
@@ -520,20 +520,19 @@ def req_8(catalog, N, area_name, crm_cd):
     if crímenes_area_interes is None:
         return f"No se encontraron crímenes para el área de interés: {area_name}"
     
-    
-    crímenes_area_filtrados = []
+    crímenes_area_filtrados = al.new_list()
     for crimen in crímenes_area_interes["elements"]:
         if crimen["Crm Cd"] == crm_cd:
-            crímenes_area_filtrados.append(crimen)
+            al.add_last(crímenes_area_filtrados,crimen)
+            
     
-   
-    parejas_crímenes = []
+    parejas_crímenes = al.new_list()
 
-    
     for crimen_area_interes in crímenes_area_filtrados:
         fecha_crimen_area = crimen_area_interes["DATE OCC"]
         lat1, lon1 = float(crimen_area_interes["LAT"]), float(crimen_area_interes["LON"])
         
+        # Ahora las coordenadas lat1, lon1 no son convertidas a int, sino que permanecen como floats.
         
         for area, crímenes_otros in catalog["Area"]["data"]["table"]["elements"]:
             if area != area_name:
@@ -542,7 +541,7 @@ def req_8(catalog, N, area_name, crm_cd):
                         fecha_crimen_otro = crimen_otro["DATE OCC"]
                         lat2, lon2 = float(crimen_otro["LAT"]), float(crimen_otro["LON"])
                         
-                        
+                        # Calculamos la distancia entre los crímenes usando la fórmula de Haversine
                         distancia = haversine(lat1, lon1, lat2, lon2)
                         
                         
@@ -551,20 +550,18 @@ def req_8(catalog, N, area_name, crm_cd):
                         else:
                             pareja = (crimen_otro, crimen_area_interes, distancia)
                         
-                       
-                        parejas_crímenes.append(pareja)
+                        al.add_last(parejas_crímenes,pareja)
     
-    # Ordenar las parejas por distancia (más cercana a más lejana)
+    
     parejas_crímenes = sorted(parejas_crímenes, key=compare_crit_by_distance)
 
-    # Obtener las N más cercanas y las N más lejanas
+   
     parejas_más_cercanas = parejas_crímenes[:N]
     parejas_más_lejanas = parejas_crímenes[-N:]
     
-    
     retorno += f"\n\nN crímenes más cercanos y lejanos del área de interés: {area_name} (Tipo: {crm_cd})\n"
     
-    # Imprimir los N más cercanos
+  
     retorno += "\n--- 3 CRÍMENES MÁS CERCANOS ---\n"
     for pareja in parejas_más_cercanas:
         crimen1, crimen2, distancia = pareja
@@ -572,7 +569,7 @@ def req_8(catalog, N, area_name, crm_cd):
         fechaHora2 = str(crimen2["DATE OCC"]).split(" ")
         retorno += (f"| {crimen1['Crm Cd']} | {crimen2['AREA NAME']} | {fechaHora1[0]} | {fechaHora2[0]} | {distancia:.2f} km |\n")
 
-    # Imprimir los N más lejanos
+  
     retorno += "\n--- 3 CRÍMENES MÁS LEJANOS ---\n"
     for pareja in parejas_más_lejanas:
         crimen1, crimen2, distancia = pareja
