@@ -465,13 +465,20 @@ def req_6(catalog,n_areas,sex_vict,month):
     ordenados = al.merge_sort(ordenados,cmp_function_req6)
     seleccionados = ordenados['elements'][0:n_areas]
 
+    #Preparar anual crimes:
+    a_crimes = al.new_list()
+    for anio in anual_crimes:
+        al.add_last(a_crimes,(anio,anual_crimes[anio]))
+    
     #Preparar retorno:
     retorno = {}
-    for key in org:
-        if key in areas_filtradas['elements']:
-            retorno[key] = org[key]
+    for dupla in seleccionados:
+        area_name,size = dupla
+        if area_name in areas_filtradas['elements']:
+            retorno[area_name] = org[area_name]
     
-    return org
+
+    return retorno, month_crimes, a_crimes
 
 def cmp_function_req6(elem1,elem2):
     area1, size1 = elem1

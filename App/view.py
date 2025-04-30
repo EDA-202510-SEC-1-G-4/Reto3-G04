@@ -136,8 +136,23 @@ def print_req_6(control):
     n_areas = int(input("Numero de areas a consultar: "))
     sex_vict = str(input("Sexo de las victimas: "))
     month = int(input("Mes en el que ocurrieron los crimenes (MM): "))
-    data = log.req_6(control,n_areas,sex_vict,month)
-    print(data)
+    data, month_crimes, anual_crimes = log.req_6(control,n_areas,sex_vict,month)
+    retorno = ''
+
+    for area in data:
+        retorno += (f"\nArea donde ocurrio el crimen: {data[area]['elements'][0]['AREA']}\n"
+                   f"Nombre del area donde ocurrio el crimen: {area}\n"
+                   f"Cantidad de crimenes en el area: {data[area]['size']}\n"
+                   "==============================================\n")
+    
+    for dupla in anual_crimes['elements']:
+        anio, acrimes = dupla
+        retorno += (f"\nCrimenes para el año {anio} --> {acrimes}\n")
+
+    retorno += ("==============================================\n"
+                f"\nCrimenes totales ocurridos en el mes: {month_crimes}\n")
+    print(retorno)
+
 
 def print_req_7(control):
     """
