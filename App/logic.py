@@ -514,7 +514,7 @@ def req_8(catalog, N, area_name, crm_cd):
     a partir de un área de interés.
     """
     retorno = ''
-    
+
     crímenes_area_interes = mp.get(catalog["Area"]["data"], area_name)
     
     if crímenes_area_interes is None:
@@ -528,15 +528,17 @@ def req_8(catalog, N, area_name, crm_cd):
     
     parejas_crímenes = al.new_list()
 
-    for crimen_area_interes in crímenes_area_filtrados:
+    for crimen_area_interes in crímenes_area_filtrados['elements']:
         fecha_crimen_area = crimen_area_interes["DATE OCC"]
         lat1, lon1 = float(crimen_area_interes["LAT"]), float(crimen_area_interes["LON"])
         
         # Ahora las coordenadas lat1, lon1 no son convertidas a int, sino que permanecen como floats.
         
-        for area, crímenes_otros in catalog["Area"]["data"]["table"]["elements"]:
-            if area != area_name:
-                for crimen_otro in crímenes_otros["value"]:
+        for pareja in catalog["Area"]["data"]["table"]["elements"]:
+            area = pareja['key']
+            crimenes_otros = pareja['value']
+            if area != area_name and area != None:
+                for crimen_otro in crimenes_otros["elements"]:
                     if crimen_otro["Crm Cd"] == crm_cd:
                         fecha_crimen_otro = crimen_otro["DATE OCC"]
                         lat2, lon2 = float(crimen_otro["LAT"]), float(crimen_otro["LON"])
@@ -553,11 +555,11 @@ def req_8(catalog, N, area_name, crm_cd):
                         al.add_last(parejas_crímenes,pareja)
     
     
-    parejas_crímenes = sorted(parejas_crímenes, key=compare_crit_by_distance)
+    parejas_crímenes = al.merge_sort(parejas_crímenes, compare_crit_by_distance)
 
    
-    parejas_más_cercanas = parejas_crímenes[:N]
-    parejas_más_lejanas = parejas_crímenes[-N:]
+    parejas_más_cercanas = parejas_crímenes['elements'][:N]
+    parejas_más_lejanas = parejas_crímenes['elements'][-N:]
     
     retorno += f"\n\nN crímenes más cercanos y lejanos del área de interés: {area_name} (Tipo: {crm_cd})\n"
     
