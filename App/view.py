@@ -149,20 +149,24 @@ def print_req_8(control):
         Función que imprime la solución del Requerimiento 8 en consola
     """
     area_name = input("Ingrese el nombre del área de interés: ")
-    crm_cd = input("Ingrese el código de crimen (crm_cd): ")
-    N = int(input("Ingrese el número de crímenes a consultar: "))
 
-    # Llamada a la lógica para obtener los resultados
-    start = log.get_time()  # Medir el tiempo de ejecución
-    resultado = log.req_8(control, N, area_name, crm_cd)  # Obtener el resultado de la lógica
+    # Solicitar el número de crímenes a mostrar
+    N = int(input("Ingrese el número N de crímenes a mostrar: "))
+
+    # Solicitar el código del crimen
+    crm_cd = input("Ingrese el código del tipo de crimen (crm_cd): ")
+
+    # Llamar a la función de lógica para obtener los resultados
+    start = log.get_time()
+    resultado = log.req_8(control, N, area_name, crm_cd)
     end = log.get_time()
 
-    # Mostrar el resultado
+    # Imprimir los resultados
     print(resultado)
-    
-    # Mostrar el tiempo de ejecución
+
+    # Medir el tiempo de ejecución
     tiempo = log.delta_time(start, end)
-    print(f"El tiempo tomado fue de {tiempo} milisegundos")
+    print(f"\nTiempo de ejecución: {tiempo:.2f} ms")
 
 
 # Se crea la lógica asociado a la vista
