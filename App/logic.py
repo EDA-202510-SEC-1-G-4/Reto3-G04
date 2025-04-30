@@ -646,7 +646,7 @@ def compare_crit_by_distance(elem1,elem2):
     res = False
     crimen_otro1, crimen_area_interes1, distancia1 = elem1
     crimen_otro2, crimen_area_interes2, distancia2 = elem2
-    if distancia1 > distancia2:
+    if distancia1 < distancia2:
         res = True
     return res
 
