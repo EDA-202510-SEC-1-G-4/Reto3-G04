@@ -1,5 +1,6 @@
 import time
 import csv
+import math
 from datetime import datetime as dt
 from DataStructures.Tree import red_black_tree as rbt
 from DataStructures.List import single_linked_list as sl
@@ -249,10 +250,6 @@ def req_3(catalog, N , area_name):
     """
     Retorna el resultado del requerimiento 3
     """
-<<<<<<< HEAD
-=======
-
->>>>>>> a034f5dc238a404763060a815d2c4e2dc33834ea
     retorno = ''
     
     crímenes_area = mp.get(catalog["Area"]["data"], area_name)
@@ -302,12 +299,6 @@ def compare_crit_by_date_desc(elm1, elm2):
         # Si las fechas son iguales, comparar por área (de mayor a menor)
         return elm1["AREA NAME"] > elm2["AREA NAME"]
     return False
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> a034f5dc238a404763060a815d2c4e2dc33834ea
 
 
 def req_4(catalog,N,edad_in,edad_fin):
@@ -514,8 +505,6 @@ def req_7(catalog):
     # TODO: Modificar el requerimiento 7
     pass
 
-
-import math
 def haversine(lat1, lon1, lat2, lon2):
     # Convertir de grados a radianes
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
