@@ -139,22 +139,22 @@ def req_1(catalog, start_date, end_date):
     filas = catalog['filas']['elements']
     
     
-    crímenes_filtrados = []
+    crímenes_filtrados = al.new_list()
     
    
     for fila in filas:
         
-        crime_date = fecha_a_Datetime(fila["DATE OCC"])  
+        crime_date = fila["DATE OCC"]
         
        
         if start_date <= crime_date <= end_date:
-            crímenes_filtrados.append(fila)
+            al.add_last(crímenes_filtrados,fila)
     
     
-    crímenes_ordenados = al.merge_sort(crímenes_filtrados, compare_crit_by_date)
+    al.merge_sort(crímenes_filtrados, compare_crit_by_date)
 
     
-    for fila in crímenes_ordenados:
+    for fila in crímenes_filtrados["elements"]:
         fechaHora = str(fila["DATE OCC"]).split(" ")
         retorno += (f"ID del crimen: {fila['DR_NO']}\n"
                     f"Fecha del incidente: {fechaHora[0]}\n"
