@@ -446,6 +446,9 @@ def req_6(catalog,n_areas,sex_vict,month):
     keys = mp.key_set(rubro)
     values = mp.value_set(rubro)
 
+    #variable para retorno:
+    month_crimes = 0
+
     org = {}
     for i in range(keys['size']):
         org[keys['elements'][i]] = values['elements'][i]
@@ -461,7 +464,12 @@ def req_6(catalog,n_areas,sex_vict,month):
             if sexo != sex_vict and mes != month:
                 al.remove(org[keys['elements'][i]],org[keys['elements'][i]]['elements'][j])
                 j -= 1
+            else:
+                month_crimes += 1
             j += 1
+
+    
+
 
     return org
 
