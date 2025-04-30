@@ -48,8 +48,8 @@ def print_req_1(control):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
-    start_date = input("Ingrese la fecha de inicio del reporte (formato m-d-y): ")
-    end_date = input("Ingrese la fecha de fin (formato m-d-y): ")
+    start_date = input("Ingrese la fecha de inicio del reporte (formato MM/DD/YYYY): ")
+    end_date = input("Ingrese la fecha de fin (formato MM/DD/YYYY): ")
 
     # Llamar a la función de lógica para obtener los crímenes dentro del rango de fechas
     start = log.get_time()
