@@ -129,61 +129,45 @@ def req_1(catalog, start_date, end_date):
     """
     Retorna el resultado del requerimiento 1
     """
-    start_date = dt.strptime(start_date, "%Y-%m-%d")
-    end_date = dt.strptime(end_date, "%Y-%m-%d")
-
-    # Obtener los registros de crímenes (las filas con la información de cada crimen)
+    retorno = ''
+    
+   
+    start_date = fecha_a_Datetime(start_date)  
+    end_date = fecha_a_Datetime(end_date)  
+    
+   
     filas = catalog['filas']['elements']
     
-    # Lista para almacenar los crímenes que cumplen con el criterio de fechas
+    
     crímenes_filtrados = []
-
-    # Filtrar crímenes entre las fechas proporcionadas
+    
+   
     for fila in filas:
-        try:
-            # Formato para fecha y hora (12 horas AM/PM)
-            crime_date = dt.strptime(fila["DATE OCC"], "%m/%d/%Y %I:%M:%S %p")  # Incluye AM/PM
-        except ValueError:
-            # Si la fecha no tiene hora, solo consideramos la fecha
-            crime_date = dt.strptime(fila["DATE OCC"], "%m/%d/%Y")
-
-        # Si el crimen ocurrió dentro del rango de fechas
+        
+        crime_date = fecha_a_Datetime(fila["DATE OCC"])  
+        
+       
         if start_date <= crime_date <= end_date:
             crímenes_filtrados.append(fila)
-
-    # Ordenar los crímenes primero por fecha (más reciente) y luego por área en caso de empate
-    crímenes_filtrados.sort(key=sort_by_date_and_area)
-
-    # Generar la respuesta en el formato solicitado
-    resultado = []
-    for fila in crímenes_filtrados:
-        resultado.append({
-            "DR_NO": fila['DR_NO'],
-            "DATE OCC": fila['DATE OCC'],
-            "TIME OCC": fila['TIME OCC'],
-            "AREA NAME": fila['AREA NAME'],
-            "Crm Cd": fila['Crm Cd'],
-            "LOCATION": fila['LOCATION']
-        })
-
-    # Retornar los resultados
-    return resultado
-
-def sort_by_date_and_area(fila):
-    """
-    Función auxiliar para ordenar por fecha y hora, luego por área.
-    Retorna una tupla para realizar la comparación de manera explícita.
-    """
-    # Convertimos la fecha y la hora en objetos datetime para que puedan ser comparados
-    try:
-        date_obj = dt.strptime(fila["DATE OCC"], "%m/%d/%Y %I:%M:%S %p")  # Usando AM/PM
-    except ValueError:
-        date_obj = dt.strptime(fila["DATE OCC"], "%m/%d/%Y")  # En caso de solo fecha
     
-    time_obj = fila["TIME OCC"]
     
-    # Retornamos una tupla con (fecha, hora, área)
-    return (date_obj, time_obj, fila["AREA NAME"])
+    crímenes_ordenados = al.merge_sort(crímenes_filtrados, compare_crit_by_date)
+
+    
+    for fila in crímenes_ordenados:
+        fechaHora = str(fila["DATE OCC"]).split(" ")
+        retorno += (f"ID del crimen: {fila['DR_NO']}\n"
+                    f"Fecha del incidente: {fechaHora[0]}\n"
+                    f"Hora del incidente: {fechaHora[1]}\n"
+                    f"Área: {fila['AREA NAME']}\n"
+                    f"Subárea: {fila['Rpt Dist No']}\n"
+                    f"Parte del crimen: {fila['Part 1-2']}\n"
+                    f"Código del crimen: {fila['Crm Cd']}\n"
+                    f"Estado del caso: {fila['Status Desc']}\n"
+                    f"Dirección: {fila['LOCATION']}\n"
+                    f"\n===========================\n")
+    
+    return retorno
 
 def fecha_a_Datetime(fecha):
 
