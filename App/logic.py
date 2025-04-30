@@ -245,11 +245,11 @@ def compare_crit_by_date(elm1,elm2):
     return isSorted
 
 
-def req_3(catalog):
+def req_3(catalog, N , area_name):
     """
     Retorna el resultado del requerimiento 3
     """
-<<<<<<< HEAD
+
     retorno = ''
     
     crímenes_area = mp.get(catalog["Area"]["data"], area_name)
@@ -299,10 +299,9 @@ def compare_crit_by_date_desc(elm1, elm2):
         # Si las fechas son iguales, comparar por área (de mayor a menor)
         return elm1["AREA NAME"] > elm2["AREA NAME"]
     return False
-=======
-    # TODO: Modificar el requerimiento 3
-    pass
->>>>>>> bbb580b2e2d330db2c2fb7b4b5dc8b4ce928a3c2
+
+
+
 
 
 def req_4(catalog,N,edad_in,edad_fin):
