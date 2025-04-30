@@ -249,7 +249,6 @@ def req_3(catalog):
     """
     Retorna el resultado del requerimiento 3
     """
-<<<<<<< HEAD
     retorno = ''
     
     crímenes_area = mp.get(catalog["Area"]["data"], area_name)
@@ -299,10 +298,6 @@ def compare_crit_by_date_desc(elm1, elm2):
         # Si las fechas son iguales, comparar por área (de mayor a menor)
         return elm1["AREA NAME"] > elm2["AREA NAME"]
     return False
-=======
-    # TODO: Modificar el requerimiento 3
-    pass
->>>>>>> bbb580b2e2d330db2c2fb7b4b5dc8b4ce928a3c2
 
 
 def req_4(catalog,N,edad_in,edad_fin):
@@ -425,9 +420,10 @@ def req_5(catalog,n_areas,fecha_in,fecha_fin):
 
     #Preparar retorno:
     retorno = {}
-    for key in org:
-        if key in areas_filtradas['elements']:
-            retorno[key] = org[key]
+    for dupla in seleccionados:
+        area_name,size = dupla
+        if area_name in areas_filtradas['elements']:
+            retorno[area_name] = org[area_name]
 
     date_min = dt.strftime(date_min, "%m/%d/%Y")[0:10]
     date_max = dt.strftime(date_max, "%m/%d/%Y")[0:10]
@@ -447,8 +443,10 @@ def req_6(catalog,n_areas,sex_vict,month):
     keys = mp.key_set(rubro)
     values = mp.value_set(rubro)
 
-    #variable para retorno:
+    #variable auxiliares:
     month_crimes = 0
+    anual_crimes = {}
+    areas_filtradas = al.new_list()
 
     org = {}
     for i in range(keys['size']):
@@ -462,18 +460,41 @@ def req_6(catalog,n_areas,sex_vict,month):
             sexo = filas['elements'][j]['Vict Sex']
             fecha = filas['elements'][j]['DATE OCC']
             mes = int(dt.strftime(fecha,"%m/%d/%Y")[0:2])
+            anio = int(dt.strftime(fecha,"%m/%d/%Y")[6:10])
             if sexo != sex_vict and mes != month:
                 al.remove(org[keys['elements'][i]],org[keys['elements'][i]]['elements'][j])
                 j -= 1
             else:
                 month_crimes += 1
+                if anio not in anual_crimes:
+                    anual_crimes[anio] = 1
+                else:
+                    anual_crimes[anio] += 1
             j += 1
 
+    #unir area con size para ordenar: 
+    ordenados = al.new_list()
+    for area in org:
+        al.add_last(ordenados,(area,org[area]['size']))
+        al.add_last(areas_filtradas,area)
+    ordenados = al.merge_sort(ordenados,cmp_function_req6)
+    seleccionados = ordenados['elements'][0:n_areas]
+
+    #Preparar retorno:
+    retorno = {}
+    for key in org:
+        if key in areas_filtradas['elements']:
+            retorno[key] = org[key]
     
-
-
     return org
 
+def cmp_function_req6(elem1,elem2):
+    area1, size1 = elem1
+    area2, size2 = elem2
+    res = False
+    if size1 < size2:
+        res = True
+    return res
 
 
 def req_7(catalog):
