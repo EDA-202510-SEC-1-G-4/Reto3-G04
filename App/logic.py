@@ -642,11 +642,13 @@ def req_8(catalog, N, area_name, crm_cd):
     
     return retorno
 
-def compare_crit_by_distance(pair):
-    """
-    Función para comparar dos crímenes. Compara por distancia.
-    """
-    return pair[2]
+def compare_crit_by_distance(elem1,elem2):
+    res = False
+    crimen_otro1, crimen_area_interes1, distancia1 = elem1
+    crimen_otro2, crimen_area_interes2, distancia2 = elem2
+    if distancia1 > distancia2:
+        res = True
+    return res
 
 # Funciones para medir tiempos de ejecucion
 
