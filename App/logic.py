@@ -245,10 +245,14 @@ def compare_crit_by_date(elm1,elm2):
     return isSorted
 
 
-def req_3(catalog):
+def req_3(catalog, N , area_name):
     """
     Retorna el resultado del requerimiento 3
     """
+<<<<<<< HEAD
+=======
+
+>>>>>>> a034f5dc238a404763060a815d2c4e2dc33834ea
     retorno = ''
     
     crímenes_area = mp.get(catalog["Area"]["data"], area_name)
@@ -298,6 +302,12 @@ def compare_crit_by_date_desc(elm1, elm2):
         # Si las fechas son iguales, comparar por área (de mayor a menor)
         return elm1["AREA NAME"] > elm2["AREA NAME"]
     return False
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> a034f5dc238a404763060a815d2c4e2dc33834ea
 
 
 def req_4(catalog,N,edad_in,edad_fin):
@@ -525,85 +535,78 @@ def req_8(catalog, N, area_name, crm_cd):
     """
     retorno = ''
     
-    # Obtener crímenes del área de interés con el código de crimen especificado
-    crímenes_area_interés = mp.get(catalog["Area"]["data"], area_name)
+    crímenes_area_interes = mp.get(catalog["Area"]["data"], area_name)
     
-    # Verificar si el área de interés existe
-    if crímenes_area_interés is None:
-        return f"No se encontraron crímenes para el área: {area_name}"
-
-    crímenes_comparar = al.new_list()
-
-    # Filtrar crímenes por código de crimen y el área de interés (búsqueda parcial)
+    if crímenes_area_interes is None:
+        return f"No se encontraron crímenes para el área de interés: {area_name}"
     
-    for fila in crímenes_area_interés["elements"]:
-        if crm_cd.lower() in fila["Crm Cd"].lower():  # Comparación parcial
-            al.add_last(crímenes_comparar, fila)
-
-    # Si no hay crímenes para comparar en el área de interés, informar al usuario
-    if al.size(crímenes_comparar) == 0:
-        return f"No se encontraron crímenes de tipo {crm_cd} en el área: {area_name}"
-
-    # Listar crímenes de otras áreas con el mismo código de crimen (búsqueda parcial)
-    crímenes_otros = []
-    for area in catalog["Area"]["data"]["table"]["elements"]:
-        if area["key"] != area_name:  # Excluir el área de interés
-            # Verificar si 'area["value"]' es válido antes de acceder
-            if area["value"] is not None:
-                for fila in area["value"]["elements"]:
-                    if crm_cd.lower() in fila["Crm Cd"].lower():  # Comparación parcial
-                        crímenes_otros.append(fila)
-
-    # Verificar si hay crímenes en otras áreas con el mismo código de crimen
-    if len(crímenes_otros) == 0:
-        return f"No se encontraron crímenes de tipo {crm_cd} en áreas distintas a {area_name}."
-
-    # Crear una lista de pares (crimen área interés, crimen otra área)
-    parejas = []
-    for crimen_area_interes in crímenes_comparar["elements"]:
-        for crimen_otro_area in crímenes_otros:
-            # Calcular la distancia usando Haversine
-            lat1, lon1 = float(crimen_area_interes["LAT"]), float(crimen_area_interes["LON"])
-            lat2, lon2 = float(crimen_otro_area["LAT"]), float(crimen_otro_area["LON"])
-            distancia = haversine(lat1, lon1, lat2, lon2)
-
-            # Comparar las fechas y asegurarse de que el crimen más antiguo aparezca primero
-            fecha_area_interes = str(crimen_area_interes["DATE OCC"]).split(" ")
-            fecha_otro_area = str(crimen_otro_area["DATE OCC"]).split(" ")
-            
-            if fecha_area_interes[0] < fecha_otro_area[0] or (fecha_area_interes[0] == fecha_otro_area[0] and fecha_area_interes[1] < fecha_otro_area[1]):
-                parejas.append([crimen_area_interes, crimen_otro_area, distancia])
-            else:
-                parejas.append([crimen_otro_area, crimen_area_interes, distancia])
-
-    # Ordenar las parejas por distancia (implementación explícita de la comparación)
-    for i in range(len(parejas)):
-        for j in range(i + 1, len(parejas)):
-            if parejas[i][2] > parejas[j][2]:
-                parejas[i], parejas[j] = parejas[j], parejas[i]  # Intercambio manual
-
-    # Seleccionar los N crímenes más cercanos y más lejanos
-    parejas_cercanas = parejas[:N]
-    parejas_lejanas = parejas[-N:]
-
-    # Formatear la salida
-    retorno += f"Total de comparaciones realizadas: {len(parejas)}\n"
     
-    for pareja in parejas_cercanas:
-        print(pareja)
-        retorno += (f"Crimen del área de interés (más antiguo): {pareja[1]['DR_NO']} - {pareja[1]['DATE OCC']} | {pareja[1]['AREA NAME']}\n"
-                    f"Crimen de otra área (más reciente): {pareja[0]['DR_NO']} - {pareja[0]['DATE OCC']} | {pareja[0]['AREA NAME']}\n"
-                    f"Distancia entre los crímenes: {pareja[2]} km\n"
-                    f"\n===========================\n")
+    crímenes_area_filtrados = []
+    for crimen in crímenes_area_interes["elements"]:
+        if crimen["Crm Cd"] == crm_cd:
+            crímenes_area_filtrados.append(crimen)
+    
+   
+    parejas_crímenes = []
 
-    for pareja in parejas_lejanas:
-        print(pareja)
-        retorno += (f"Crimen del área de interés (más antiguo): {pareja[1]['DR_NO']} - {pareja[1]['DATE OCC']} | {pareja[1]['AREA NAME']}\n"
-                    f"Crimen de otra área (más reciente): {pareja[0]['DR_NO']} - {pareja[0]['DATE OCC']} | {pareja[0]['AREA NAME']}\n"
-                    f"Distancia entre los crímenes: {pareja[2]} km\n"
-                    f"\n===========================\n")
+    
+    for crimen_area_interes in crímenes_area_filtrados:
+        fecha_crimen_area = crimen_area_interes["DATE OCC"]
+        lat1, lon1 = float(crimen_area_interes["LAT"]), float(crimen_area_interes["LON"])
+        
+        
+        for area, crímenes_otros in catalog["Area"]["data"]["table"]["elements"]:
+            if area != area_name:
+                for crimen_otro in crímenes_otros["value"]:
+                    if crimen_otro["Crm Cd"] == crm_cd:
+                        fecha_crimen_otro = crimen_otro["DATE OCC"]
+                        lat2, lon2 = float(crimen_otro["LAT"]), float(crimen_otro["LON"])
+                        
+                        
+                        distancia = haversine(lat1, lon1, lat2, lon2)
+                        
+                        
+                        if fecha_crimen_area < fecha_crimen_otro:
+                            pareja = (crimen_area_interes, crimen_otro, distancia)
+                        else:
+                            pareja = (crimen_otro, crimen_area_interes, distancia)
+                        
+                       
+                        parejas_crímenes.append(pareja)
+    
+    # Ordenar las parejas por distancia (más cercana a más lejana)
+    parejas_crímenes = sorted(parejas_crímenes, key=compare_crit_by_distance)
 
+    # Obtener las N más cercanas y las N más lejanas
+    parejas_más_cercanas = parejas_crímenes[:N]
+    parejas_más_lejanas = parejas_crímenes[-N:]
+    
+    
+    retorno += f"\n\nN crímenes más cercanos y lejanos del área de interés: {area_name} (Tipo: {crm_cd})\n"
+    
+    # Imprimir los N más cercanos
+    retorno += "\n--- 3 CRÍMENES MÁS CERCANOS ---\n"
+    for pareja in parejas_más_cercanas:
+        crimen1, crimen2, distancia = pareja
+        fechaHora1 = str(crimen1["DATE OCC"]).split(" ")
+        fechaHora2 = str(crimen2["DATE OCC"]).split(" ")
+        retorno += (f"| {crimen1['Crm Cd']} | {crimen2['AREA NAME']} | {fechaHora1[0]} | {fechaHora2[0]} | {distancia:.2f} km |\n")
+
+    # Imprimir los N más lejanos
+    retorno += "\n--- 3 CRÍMENES MÁS LEJANOS ---\n"
+    for pareja in parejas_más_lejanas:
+        crimen1, crimen2, distancia = pareja
+        fechaHora1 = str(crimen1["DATE OCC"]).split(" ")
+        fechaHora2 = str(crimen2["DATE OCC"]).split(" ")
+        retorno += (f"| {crimen1['Crm Cd']} | {crimen2['AREA NAME']} | {fechaHora1[0]} | {fechaHora2[0]} | {distancia:.2f} km |\n")
+    
     return retorno
+
+def compare_crit_by_distance(pair):
+    """
+    Función para comparar dos crímenes. Compara por distancia.
+    """
+    return pair[2]
 
 # Funciones para medir tiempos de ejecucion
 
