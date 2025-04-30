@@ -128,46 +128,61 @@ def req_1(catalog, start_date, end_date):
     """
     Retorna el resultado del requerimiento 1
     """
-    retorno = ''
-    
-    
-    start_date = fecha_a_Datetime(start_date)
-    end_date = fecha_a_Datetime(end_date)
-    
-    
-    fechas_filtradas = rbt.values(catalog["Date_Occrd"]["data"], start_date, end_date)
-    
-    
-    crímenes_filtrados = al.new_list()
-    
-    
-    for i in range(sl.size(fechas_filtradas)):
-        fila = sl.get_element(fechas_filtradas, i)
-        
-        for crimen in fila["elements"]:
-            
-            al.add_last(crímenes_filtrados, crimen)
-    
-    
-    crímenes_ordenados = al.merge_sort(crímenes_filtrados, compare_crit_by_date)
+    start_date = dt.strptime(start_date, "%Y-%m-%d")
+    end_date = dt.strptime(end_date, "%Y-%m-%d")
 
+    # Obtener los registros de crímenes (las filas con la información de cada crimen)
+    filas = catalog['filas']['elements']
     
-    if al.size(crímenes_ordenados) > 10:
-        crímenes_ordenados = crímenes_ordenados["elements"][:5] + crímenes_ordenados["elements"][-5:]
-    
-   
-    for crimen in crímenes_ordenados:
-        fechaHora = str(crimen["DATE OCC"]).split(" ")
-        retorno += (f"ID del crimen: {crimen['DR_NO']}\n"
-                    f"Fecha del incidente: {fechaHora[0]}\n"
-                    f"Hora del incidente: {fechaHora[1]}\n"
-                    f"Área: {crimen['AREA NAME']}\n"
-                    f"Código del crimen: {crimen['Crm Cd']}\n"
-                    f"Dirección: {crimen['LOCATION']}\n"
-                    f"\n===========================\n")
+    # Lista para almacenar los crímenes que cumplen con el criterio de fechas
+    crímenes_filtrados = []
 
-    return retorno
+    # Filtrar crímenes entre las fechas proporcionadas
+    for fila in filas:
+        try:
+            # Formato para fecha y hora (12 horas AM/PM)
+            crime_date = dt.strptime(fila["DATE OCC"], "%m/%d/%Y %I:%M:%S %p")  # Incluye AM/PM
+        except ValueError:
+            # Si la fecha no tiene hora, solo consideramos la fecha
+            crime_date = dt.strptime(fila["DATE OCC"], "%m/%d/%Y")
+
+        # Si el crimen ocurrió dentro del rango de fechas
+        if start_date <= crime_date <= end_date:
+            crímenes_filtrados.append(fila)
+
+    # Ordenar los crímenes primero por fecha (más reciente) y luego por área en caso de empate
+    crímenes_filtrados.sort(key=sort_by_date_and_area)
+
+    # Generar la respuesta en el formato solicitado
+    resultado = []
+    for fila in crímenes_filtrados:
+        resultado.append({
+            "DR_NO": fila['DR_NO'],
+            "DATE OCC": fila['DATE OCC'],
+            "TIME OCC": fila['TIME OCC'],
+            "AREA NAME": fila['AREA NAME'],
+            "Crm Cd": fila['Crm Cd'],
+            "LOCATION": fila['LOCATION']
+        })
+
+    # Retornar los resultados
+    return resultado
+
+def sort_by_date_and_area(fila):
+    """
+    Función auxiliar para ordenar por fecha y hora, luego por área.
+    Retorna una tupla para realizar la comparación de manera explícita.
+    """
+    # Convertimos la fecha y la hora en objetos datetime para que puedan ser comparados
+    try:
+        date_obj = dt.strptime(fila["DATE OCC"], "%m/%d/%Y %I:%M:%S %p")  # Usando AM/PM
+    except ValueError:
+        date_obj = dt.strptime(fila["DATE OCC"], "%m/%d/%Y")  # En caso de solo fecha
     
+    time_obj = fila["TIME OCC"]
+    
+    # Retornamos una tupla con (fecha, hora, área)
+    return (date_obj, time_obj, fila["AREA NAME"])
 
 def fecha_a_Datetime(fecha):
 
@@ -230,10 +245,11 @@ def compare_crit_by_date(elm1,elm2):
     return isSorted
 
 
-def req_3(catalog, N, area_name):
+def req_3(catalog):
     """
     Retorna el resultado del requerimiento 3
     """
+<<<<<<< HEAD
     retorno = ''
     
     crímenes_area = mp.get(catalog["Area"]["data"], area_name)
@@ -283,13 +299,20 @@ def compare_crit_by_date_desc(elm1, elm2):
         # Si las fechas son iguales, comparar por área (de mayor a menor)
         return elm1["AREA NAME"] > elm2["AREA NAME"]
     return False
+=======
+    # TODO: Modificar el requerimiento 3
+    pass
+>>>>>>> bbb580b2e2d330db2c2fb7b4b5dc8b4ce928a3c2
 
 
 def req_4(catalog,N,edad_in,edad_fin):
     """
     Retorna el resultado del requerimiento 4
     """
-    
+    retornoGraves = ""
+    retornoLeves = ""
+    edad_fin = str(edad_fin)
+    edad_in = str(edad_in)
     filtro = rbt.values(catalog["Edad"]["data"],edad_in,edad_fin)
     leves = al.new_list()
     graves = al.new_list()
@@ -307,6 +330,35 @@ def req_4(catalog,N,edad_in,edad_fin):
     ordenadosLeve = ordenadosLeve["elements"][:N]   
     ordenadosGrave = ordenadosGrave["elements"][:N]
 
+    for elm in ordenadosGrave:
+        fechaHora = str(elm["DATE OCC"]).split(" ")
+        retornoGraves += (f"Identificador: {elm['DR_NO']}\n"
+                  f"Fecha del incidente: {fechaHora[0]}\n"
+                  f"Hora del incidente: {fechaHora[1]}\n"
+                  f"Área: {elm['AREA NAME']}\n"
+                  f"Subárea: {elm['Rpt Dist No']}\n"
+                  f"Gravedad del crimen: Grave (1)\n"
+                  f"Código del crimen: {elm['Crm Cd']}\n"
+                  f"Edad de la víctima: {elm['Vict Age']}\n"
+                  f"Estado del caso: {elm['Status Desc']}\n"
+                  f"Dirección del crimen: {elm['LOCATION']}\n"
+                  f"\n===========================\n")
+        
+    for elm in ordenadosLeve:
+                fechaHora = str(elm["DATE OCC"]).split(" ")
+                retornoLeves += (f"Identificador: {elm['DR_NO']}\n"
+                          f"Fecha del incidente: {fechaHora[0]}\n"
+                          f"Hora del incidente: {fechaHora[1]}\n"
+                          f"Área: {elm['AREA NAME']}\n"
+                          f"Subárea: {elm['Rpt Dist No']}\n"
+                          f"Gravedad del crimen: Leve (2)\n"
+                          f"Código del crimen: {elm['Crm Cd']}\n"
+                          f"Edad de la víctima: {elm['Vict Age']}\n"
+                          f"Estado del caso: {elm['Status Desc']}\n"
+                          f"Dirección del crimen: {elm['LOCATION']}\n"
+                          f"\n===========================\n")
+    return retornoGraves, retornoLeves
+
 
 
 
@@ -321,7 +373,7 @@ def sort_crit_by_age(elm1,elm2):
     if fecha1 > fecha2:
         isSorted = True
     elif fecha1 == fecha2:
-        if area1 < area2:
+        if area1 > area2:
             isSorted = True
     
     return isSorted
@@ -331,27 +383,89 @@ def req_5(catalog,n_areas,fecha_in,fecha_fin):
     fecha_in = fecha_a_Datetime(fecha_in)
     fecha_fin = fecha_a_Datetime(fecha_fin)
     rubro = catalog['Area']['data']
-    llaves = mp.key_set(rubro)
+    keys = mp.key_set(rubro)
     values = mp.value_set(rubro)
-    for i in range(values['size']):
+    no_resueltos = 0
+    date_min = dt.strptime("12/31/2100", "%m/%d/%Y")
+    date_max = dt.strptime("01/01/0001", "%m/%d/%Y")
+
+    #variables auxiliares:
+    areas_filtradas = al.new_list()
+    
+    #simplificar el hashmap en un diccionario:
+    org = {}
+    for i in range(keys['size']):
+        org[keys['elements'][i]] = values['elements'][i]
+    
+    #filtro por fechas el diccionario:
+    for i in range(keys['size']):
         filas = values['elements'][i]
         j = 0
-        while j < filas['size']:
+        while j < org[keys['elements'][i]]['size']:
             fecha = filas['elements'][j]['DATE OCC']
-            if fecha > fecha_fin or fecha < fecha_in:
-                al.remove(filas,filas['elements'][j])
-                j += 1
+            if fecha < fecha_in or fecha > fecha_fin:
+                al.remove(org[keys['elements'][i]],org[keys['elements'][i]]['elements'][j])
+                j -= 1
+            else:
+                if org[keys['elements'][i]]['elements'][j]['Status Desc'] == "Invest Cont":
+                    no_resueltos += 1
+                if org[keys['elements'][i]]['elements'][j]['DATE OCC'] < date_min:
+                    date_min = org[keys['elements'][i]]['elements'][j]['DATE OCC']
+                if org[keys['elements'][i]]['elements'][j]['DATE OCC'] > date_max:
+                    date_max = org[keys['elements'][i]]['elements'][j]['DATE OCC']
             j += 1
-    
-    return filas
-    
 
-def req_6(catalog):
-    """
-    Retorna el resultado del requerimiento 6
-    """
-    # TODO: Modificar el requerimiento 6
-    pass
+    #unir area con size para ordenar: 
+    ordenados = al.new_list()
+    for area in org:
+        al.add_last(ordenados,(area,org[area]['size']))
+        al.add_last(areas_filtradas,area)
+    ordenados = al.merge_sort(ordenados,cmp_function_req5)
+    seleccionados = ordenados['elements'][0:n_areas]
+
+    #Preparar retorno:
+    retorno = {}
+    for key in org:
+        if key in areas_filtradas['elements']:
+            retorno[key] = org[key]
+
+    date_min = dt.strftime(date_min, "%m/%d/%Y")[0:10]
+    date_max = dt.strftime(date_max, "%m/%d/%Y")[0:10]
+
+    return retorno, no_resueltos, date_min, date_max
+
+def cmp_function_req5(elem1,elem2):
+    area1, size1 = elem1
+    area2, size2 = elem2
+    res = False
+    if size1 > size2:
+        res = True
+    return res
+
+def req_6(catalog,n_areas,sex_vict,month):
+    rubro = catalog['Area']['data']
+    keys = mp.key_set(rubro)
+    values = mp.value_set(rubro)
+
+    org = {}
+    for i in range(keys['size']):
+        org[keys['elements'][i]] = values['elements'][i]
+    
+    #filtro por sexo y mes el diccionario:
+    for i in range(keys['size']):
+        filas = values['elements'][i]
+        j = 0
+        while j < org[keys['elements'][i]]['size']:
+            sexo = filas['elements'][j]['Vict Sex']
+            fecha = filas['elements'][j]['DATE OCC']
+            mes = int(dt.strftime(fecha,"%m/%d/%Y")[0:2])
+            if sexo != sex_vict and mes != month:
+                al.remove(org[keys['elements'][i]],org[keys['elements'][i]]['elements'][j])
+                j -= 1
+            j += 1
+
+    return org
+
 
 
 def req_7(catalog):

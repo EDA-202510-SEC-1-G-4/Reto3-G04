@@ -94,8 +94,16 @@ def print_req_4(control):
     """
         Función que imprime la solución del Requerimiento 4 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    N = int(input("Ingrese el número de crímenes a consultar: "))
+    start_age = int(input("Ingrese la edad inicial: "))
+    end_age = int(input("Ingrese la edad final: "))
+    start = log.get_time()
+    resultadoGraves, resultadoLeves = log.req_4(control, N, start_age, end_age)
+    print("Resultado de crímenes graves:\n", resultadoGraves)
+    print("Resultado de crímenes leves:\n", resultadoLeves)
+    end = log.get_time()
+    tiempo = log.delta_time(start, end)
+    print(f"El tiempo tomado fue de {tiempo}\n")
 
 
 def print_req_5(control):
@@ -107,16 +115,26 @@ def print_req_5(control):
     n_areas = int(input('Numero de areas a consultar: '))
     fecha_in = str(input('Fecha inicial de busqueda (MM/DD/YYYY): '))
     fecha_fin = str(input('Fecha final de busqueda (MM/DD/YYYY): '))
-    print(log.req_5(control,n_areas,fecha_in,fecha_fin))
+    data, no_resueltos, date_min, date_max = log.req_5(control,n_areas,fecha_in,fecha_fin)
+    retorno = ''
+    for area in data:
+        retorno += (f"\nArea donde ocurrio el crimen: {data[area]['elements'][0]['AREA']}\n"
+                   f"Nombre del area donde ocurrio el crimen: {area}\n"
+                   "==============================================\n")
+                   
+    retorno += (f"Crimenes no resueltos en el rango de fechas: {no_resueltos}\n"
+                f"Fecha del primer crimen: {date_min}\n"
+                f"Fecha del ultimo crimen: {date_max}\n"
+                "==============================================\n")
+    print(retorno)     
 
 
 def print_req_6(control):
-    """
-        Función que imprime la solución del Requerimiento 6 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 6
-    pass
-
+    n_areas = int(input("Numero de areas a consultar: "))
+    sex_vict = str(input("Sexo de las victimas: "))
+    month = int(input("Mes en el que ocurrieron los crimenes (MM): "))
+    data = log.req_6(control,n_areas,sex_vict,month)
+    print(data)
 
 def print_req_7(control):
     """
